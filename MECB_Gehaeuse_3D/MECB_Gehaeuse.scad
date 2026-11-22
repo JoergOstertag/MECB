@@ -15,14 +15,33 @@
 //  Nullpunkt des Modells: linke vordere Ecke der Backplane,
 //  z = 0 ist die OBERSEITE der Backplane-Leiterplatte.
 //
-//  Teile:  boden + rahmen + blende + deckel   (+ probe zum Vorabtest)
+//  DER RAHMEN BESTEHT AUS VIER SEITENTEILEN (senkrechte Teilung an den
+//  Ecken), damit kein Teil hoch gedruckt werden muss:
+//    wand_vorn    - Laengswand mit Kartenfuehrung, liegend  112 x 135 x 15
+//    wand_hinten  - dasselbe gespiegelt,           liegend  112 x 135 x 15
+//    blende       - linke Seite, Fenster fuers Netzteil     135 x 101 x 3
+//    wand_rechts  - rechte Seite, Lueftung                  135 x 101 x 3
+//  Die beiden Laengswaende tragen alle Gewinde; Boden und Deckel
+//  klammern sie, die beiden Seitenplatten ziehen sie zusammen.
+//
+//  Teile:  boden + wand_vorn + wand_hinten + blende + wand_rechts
+//          + deckel   (+ probe zum Vorabtest)
 //  Schrauben: 6x M3x8 (Backplane), 4x M3x12 (Boden), 4x M3x12 (Deckel),
-//             4x M3x12 (Blende) - alle selbstschneidend in den Kunststoff.
+//             4x M3x12 (blende), 4x M3x12 (wand_rechts) - alle
+//             selbstschneidend in den Kunststoff.
+//
+//  REIHENFOLGE DES ZUSAMMENBAUS (geprueft, nicht beliebig):
+//    1. Backplane auf die Dome des Bodens schrauben (6x M3x8). Das MUSS
+//       zuerst geschehen: zwei der sechs Schrauben liegen danach unter
+//       den Saeulen der Laengswaende.
+//    2. Karten einstecken, solange noch keine Wand steht.
+//    3. wand_vorn und wand_hinten aufsetzen und am Boden verschrauben.
+//    4. blende und wand_rechts anschrauben, Deckel zuletzt.
 // =====================================================================
 
 /* [Was erzeugt werden soll] */
 // alle = Zusammenbau-Ansicht, sonst ein Druckteil in Drucklage
-teil = "alle";          // [alle, boden, rahmen, blende, deckel, probe]
+teil = "alle";          // [alle, boden, wand_vorn, wand_hinten, blende, wand_rechts, deckel, probe]
 // Hardware in der Zusammenbau-Ansicht mitzeichnen
 zeige_hardware = true;
 
@@ -59,14 +78,21 @@ kanal       = 3.0;      // lichte Kanalbreite (Karte 1.6 mm + Lot + Spiel)
 steg_t      = 2.2;      // wie weit der Steg von der Wandinnenseite vorsteht
 steg_b      = 2.5;      // Stegdicke in x
 steg_z0     = 2.0;      // Stegunterkante ueber der Backplane-Oberseite
+// Einfuehrtrichter am oberen Stegende: auf dieser Hoehe weicht der Steg
+// in x nach aussen (der Kanal wird breiter) und zieht sich in y zurueck.
+// Ohne die x-Erweiterung muss man die Kartenkante beim Einstecken auf
+// 3.0 mm genau treffen; mit ihr sind es oben 3.0 + 2*0.8 = 4.6 mm.
+trichter_z  = 10.0;
+trichter_x  = 0.8;
 
 /* [Schrauben und Oeffnungen] */
 m3_kern     = 2.7;      // Kernloch, M3 schneidet sich selbst ein
 m3_frei     = 3.4;
 m3_kopf     = 6.4;      // Senkung fuer Zylinderkopf
+platte_luft = 0.2;      // Luft der Seitenplatten in ihrer Oeffnung
 blende_fenster_y = [4, 96];   // Fenster Netzteilseite, y von..bis
 blende_fenster_z = [0, 22];   // ... z von..bis (USB-C, Hohlbuchse, Schalter)
-slot5_schlitz = false;  // Schlitz in der rechten Wand fuer die Winkelbuchse
+slot5_schlitz = false;  // Schlitz in wand_rechts fuer die Winkelbuchse
 deckel_art  = "luft";   // [luft, offen, zu]
 
 $fn = 48;
@@ -86,22 +112,36 @@ z_karte_o = STECKHOEHE + KARTE_H;
 steg_oben = z_top - 4;              // Platz fuer den Deckelkragen
 kragen    = 3;                      // Deckelkragen, taucht in den Rahmen
 
-// Schraubpunkte Boden -> Rahmen: liegen zwischen den Steckerreihen und
-// neben den Backplane-Domen (gegen die Bohrdatei der Backplane geprueft)
+// Schraubpunkte Boden -> Laengswaende: liegen zwischen den Steckerreihen
+// und neben den Backplane-Domen (gegen die Bohrdatei der Backplane
+// geprueft). dom_boden_d ist der Aussendurchmesser dieser Dome; der
+// Positionierrand des Bodens wird an diesen Stellen ausgespart.
 BODEN_SCHRAUBE = [[30, yi0 + 3], [70, yi0 + 3],
                   [30, yi1 - 3], [70, yi1 - 3]];
-// Schraubpunkte Deckel -> Rahmen (die vier Innenecken)
-DECKEL_SCHRAUBE = [[xi0 + 3.5, yi0 + 3.5], [xi1 - 3.5, yi0 + 3.5],
-                   [xi1 - 3.5, yi1 - 3.5], [xi0 + 3.5, yi1 - 3.5]];
-// Schraubpunkte Blende -> Rahmen (y, z); die Gewinde sitzen in den
-// Saeulen an den offenen Enden der beiden Fuehrungswaende.
-BLENDE_SCHRAUBE = [[yi0 + 3.5, 20], [yi1 - 3.5, 20],
+dom_boden_d = 10;
+// Schraubpunkte Deckel -> Laengswaende. In x NICHT in die Ecke, sondern
+// 3.5 mm (links) bzw. 6 mm (rechts) vom Innenmass weg: der Dom hat
+// 11 mm Durchmesser und darf nicht in die Oeffnung einer Seitenplatte
+// ragen. Links darf er naeher heran, dort ist die Wand ohnehin
+// aufgeschnitten.
+DECKEL_SCHRAUBE = [[xi0 + 3.5, yi0 + 3.5], [xi1 - 6, yi0 + 3.5],
+                   [xi1 - 6, yi1 - 3.5], [xi0 + 3.5, yi1 - 3.5]];
+dom_deckel_d = 11;
+// Schraubpunkte Seitenplatte -> Laengswand (y, z); die Gewinde sitzen in
+// den Saeulen an den Enden der beiden Fuehrungswaende. Gleiche Lage
+// links (blende) und rechts (wand_rechts).
+PLATTE_SCHRAUBE = [[yi0 + 3.5, 20], [yi1 - 3.5, 20],
                    [yi0 + 3.5, 95], [yi1 - 3.5, 95]];
-saeule_x  = 9;          // Laenge der Blendensaeulen in x
-saeule_y  = 7;          // Tiefe der Blendensaeulen in y
+saeule_x  = 9;          // Laenge der Saeulen in x
+saeule_y  = 7;          // Tiefe der Saeulen in y
 // Luftschlitze in den Fuehrungswaenden (x-Mitten zwischen den Kanaelen)
 LUEFT_X = [12, 29.6, 49.9, 70.2, 92];
 LUEFT_Y = [12 : 15 : 95];
+
+// Teilungsebene der Laengswaende: so weit reicht das tiefste Anbauteil
+// einer Wand nach innen (Deckeldom: 3.5 + 11/2 = 9 mm). 12 mm laesst
+// Luft und schneidet durch kein Bauteil.
+wand_tief = 12;
 
 // ------------------------------------------------------------- Hilfen 2D
 module rrect(w, h, r) {
@@ -140,28 +180,33 @@ module fenster_x(z1, z2, ya, yb, r, xa, xl) {
 // y_wand: Innenflaeche der Wand, dir: +1 = Steg ragt nach +y.
 // Der Steg beginnt 0.8 mm INNERHALB der Wand, damit er sicher
 // verschmilzt (sonst nur eine beruehrende Flaeche).
-module _steg_abschnitt(xm, y_wand, dir, z1, p1, z2, p2) {
+// xm1/xm2: Stegmitte unten/oben - oben weicht sie fuer den
+// Einfuehrtrichter nach aussen.
+module _steg_abschnitt(xm1, xm2, y_wand, dir, z1, p1, z2, p2) {
     hull() {
-        translate([xm - steg_b/2,
+        translate([xm1 - steg_b/2,
                    dir > 0 ? y_wand - 0.8 : y_wand - p1, z1])
             cube([steg_b, max(p1, 0.01) + 0.8, 0.01]);
-        translate([xm - steg_b/2,
+        translate([xm2 - steg_b/2,
                    dir > 0 ? y_wand - 0.8 : y_wand - p2, z2])
             cube([steg_b, max(p2, 0.01) + 0.8, 0.01]);
     }
 }
-module steg(xm, y_wand, dir) {
-    _steg_abschnitt(xm, y_wand, dir, steg_z0, 0.01, steg_z0 + 2.2, steg_t);
-    _steg_abschnitt(xm, y_wand, dir, steg_z0 + 2.2, steg_t,
-                    steg_oben - 8, steg_t);
-    _steg_abschnitt(xm, y_wand, dir, steg_oben - 8, steg_t,
-                    steg_oben, 0.6);   // Einfuehrtrichter oben
+// s = -1 / +1: auf welcher Seite der Kanalmitte der Steg sitzt. Der
+// Trichter weicht in diese Richtung aus, der Kanal wird oben breiter.
+module steg(xm, y_wand, dir, s) {
+    _steg_abschnitt(xm, xm, y_wand, dir, steg_z0, 0.01,
+                    steg_z0 + 2.2, steg_t);
+    _steg_abschnitt(xm, xm, y_wand, dir, steg_z0 + 2.2, steg_t,
+                    steg_oben - trichter_z, steg_t);
+    _steg_abschnitt(xm, xm + s * trichter_x, y_wand, dir,
+                    steg_oben - trichter_z, steg_t, steg_oben, 0.6);
 }
 module fuehrungen() {
     for (xc = SLOT_X) for (s = [-1, 1]) {
         xm = xc + s * (kanal + steg_b) / 2;
-        steg(xm, yi0, +1);
-        steg(xm, yi1, -1);
+        steg(xm, yi0, +1, s);
+        steg(xm, yi1, -1, s);
     }
 }
 
@@ -173,16 +218,17 @@ module dom(x, y, z_unten, hoehe, d_aussen, d_loch, loch_tief) {
             cylinder(d = d_loch, h = loch_tief);
     }
 }
-// Saeule am offenen Ende einer Fuehrungswand, traegt die Blendengewinde.
-// Beginnt bei z = steg_z0 (ueber der Backplane) mit 45-Grad-Anlauf.
-module blendensaeule(y_wand, dir) {
+// Saeule am Ende einer Fuehrungswand, traegt die Gewinde einer
+// Seitenplatte. Beginnt bei z = steg_z0 (ueber der Backplane) mit
+// 45-Grad-Anlauf. x_von = linke Kante der Saeule.
+module saeule(x_von, y_wand, dir) {
     y_a = dir > 0 ? y_wand - 0.8 : y_wand - saeule_y;
     hull() {
-        translate([xi0, y_a, steg_z0]) cube([saeule_x, 0.81, 0.01]);
-        translate([xi0, y_a, steg_z0 + saeule_y])
+        translate([x_von, y_a, steg_z0]) cube([saeule_x, 0.81, 0.01]);
+        translate([x_von, y_a, steg_z0 + saeule_y])
             cube([saeule_x, saeule_y + 0.8, 0.01]);
     }
-    translate([xi0, y_a, steg_z0 + saeule_y])
+    translate([x_von, y_a, steg_z0 + saeule_y])
         cube([saeule_x, saeule_y + 0.8, steg_oben - steg_z0 - saeule_y]);
 }
 
@@ -191,14 +237,20 @@ module boden() {
     difference() {
         union() {
             translate([0, 0, z_bo_bot]) linear_extrude(boden_d) p_aussen();
-            // Positionierrand innen (fuehrt Rahmen und Blende)
-            translate([0, 0, z_bo_top]) linear_extrude(3)
+            // Positionierrand innen (fuehrt die Waende). An den
+            // Gewindedomen der Laengswaende ausgespart - ohne diese
+            // Aussparung setzt der Rahmen 3 mm zu hoch auf (gemessener
+            // Materialkonflikt von 206 mm3).
+            translate([0, 0, z_bo_top]) linear_extrude(3) difference() {
                 difference() { p_innen(); offset(r = -2) p_innen(); }
+                for (p = BODEN_SCHRAUBE)
+                    translate(p) circle(d = dom_boden_d + 0.8);
+            }
             // Abstandsdome fuer die Backplane (M3 schneidet sich ein)
             for (x = BP_LOCH_X) for (y = BP_LOCH_Y)
                 dom(x, y, z_bo_top, dom_h, 7, m3_kern, 10);
         }
-        // Durchgangsloecher Boden -> Rahmen, Senkung von unten
+        // Durchgangsloecher Boden -> Laengswand, Senkung von unten
         for (p = BODEN_SCHRAUBE) {
             translate([p[0], p[1], z_bo_bot - 1])
                 cylinder(d = m3_frei, h = boden_d + 2);
@@ -211,66 +263,105 @@ module boden() {
     }
 }
 
-// ================================================================== RAHMEN
-module rahmen() {
+// ============================================ RAHMEN (zwei Laengswaende)
+// rahmen_voll() ist der vollstaendige Rahmen OHNE die beiden
+// Seitenplatten: zwei Laengswaende samt Ecken, links und rechts offen.
+// Daraus schneiden wand_vorn() und wand_hinten() ihr Stueck heraus; so
+// kann die Teilung nicht von der Zusammenbau-Ansicht abweichen.
+module rahmen_voll() {
     difference() {
         union() {
             // umlaufende Wand
             translate([0, 0, z_bo_top]) linear_extrude(z_top - z_bo_top)
                 difference() { p_aussen(); p_innen(); }
             fuehrungen();
-            blendensaeule(yi0, +1);
-            blendensaeule(yi1, -1);
+            saeule(xi0, yi0, +1);                 // links vorn
+            saeule(xi0, yi1, -1);                 // links hinten
+            saeule(xi1 - saeule_x, yi0, +1);      // rechts vorn
+            saeule(xi1 - saeule_x, yi1, -1);      // rechts hinten
             // Gewindedome fuer den Deckel (ragen 2 mm in die Waende)
             for (p = DECKEL_SCHRAUBE)
-                dom(p[0], p[1], z_top - 14, 14, 11, m3_kern, 11);
+                dom(p[0], p[1], z_top - 14, 14, dom_deckel_d, m3_kern, 11);
             // Gewindedome fuer die Bodenplatte
             for (p = BODEN_SCHRAUBE)
-                dom(p[0], p[1], z_bo_top, 9, 10, m3_kern, 8);
+                dom(p[0], p[1], z_bo_top, 9, dom_boden_d, m3_kern, 8);
         }
-        // Blendenoeffnung: linke Wand zwischen den Fuehrungswaenden heraus
+        // Oeffnung links (blende) und rechts (wand_rechts): die Wand
+        // zwischen den Fuehrungswaenden heraus
         translate([x0 - 1, yi0, z_bo_top - 1])
             cube([wand + 1, yi1 - yi0, z_top - z_bo_top + 2]);
-        // Gewinde fuer die Blende in die Saeulen
-        for (p = BLENDE_SCHRAUBE)
+        translate([xi1, yi0, z_bo_top - 1])
+            cube([wand + 1, yi1 - yi0, z_top - z_bo_top + 2]);
+        // Gewinde fuer die Seitenplatten in die Saeulen
+        for (p = PLATTE_SCHRAUBE) {
             translate([xi0 - 0.01, p[0], p[1]]) rotate([0, 90, 0])
                 cylinder(d = m3_kern, h = 8);
+            translate([xi1 + 0.01, p[0], p[1]]) rotate([0, -90, 0])
+                cylinder(d = m3_kern, h = 8);
+        }
         // Luftschlitze in den beiden Fuehrungswaenden
         for (x = LUEFT_X) for (zz = [[30, 60], [66, 96], [102, z_top - 8]]) {
             schlitz_xz(x, zz[0], zz[1], 3.5, y0 - 1, wand + 2);
             schlitz_xz(x, zz[0], zz[1], 3.5, yi1 - 1, wand + 2);
         }
-        // Luftschlitze in der rechten Wand
-        for (y = LUEFT_Y)
-            schlitz_yz(y, 30, z_top - 8, 3.5, xi1 - 1, wand + 2);
-        // optionaler Schlitz fuer eine Karte in der Winkelbuchse (Slot 5)
-        if (slot5_schlitz)
-            translate([xi1 - 1, 2, STECKHOEHE - 3])
-                cube([wand + 2, BP - 4, 12]);
+    }
+}
+// Die beiden Druckteile: senkrechte Teilung an den Ecken.
+module wand_vorn() {
+    intersection() {
+        rahmen_voll();
+        translate([x0 - 1, y0 - 1, z_bo_top - 1])
+            cube([x1 - x0 + 2, (yi0 + wand_tief) - (y0 - 1),
+                  z_top - z_bo_top + 2]);
+    }
+}
+module wand_hinten() {
+    intersection() {
+        rahmen_voll();
+        translate([x0 - 1, yi1 - wand_tief, z_bo_top - 1])
+            cube([x1 - x0 + 2, (y1 + 1) - (yi1 - wand_tief),
+                  z_top - z_bo_top + 2]);
     }
 }
 
-// ================================================================== BLENDE
-module blende() {
+// ======================================== SEITENPLATTEN (blende, rechts)
+// seite = -1: links, mit Fenster fuer das Netzteil (die "Blende").
+// seite = +1: rechts, nur Lueftung.
+module seitenplatte(seite) {
+    xa = (seite < 0 ? x0 : xi1) + platte_luft;   // untere Kante in x
+    xb = xa + wand - 2*platte_luft;              // obere Kante in x
+    x_aussen = seite < 0 ? xa : xb;              // Seite des Schraubkopfs
+    dreh = seite < 0 ? 90 : -90;                 // Bohrrichtung nach innen
     difference() {
-        translate([x0 + 0.2, yi0 + 0.2, z_bo_top + 0.2])
-            cube([wand - 0.4, (yi1 - yi0) - 0.4, (z_top - z_bo_top) - 0.4]);
+        translate([xa, yi0 + platte_luft, z_bo_top + platte_luft])
+            cube([wand - 2*platte_luft,
+                  (yi1 - yi0) - 2*platte_luft,
+                  (z_top - z_bo_top) - 2*platte_luft]);
         // Fenster fuer USB-C, Hohlbuchse, Schraubklemme, LED, Schalter
-        fenster_x(blende_fenster_z[0], blende_fenster_z[1],
-                  blende_fenster_y[0], blende_fenster_y[1], 2,
-                  x0 - 1, wand + 2);
+        if (seite < 0)
+            fenster_x(blende_fenster_z[0], blende_fenster_z[1],
+                      blende_fenster_y[0], blende_fenster_y[1], 2,
+                      xa - 1, wand + 2);
         // Schraubloecher mit Senkung von aussen
-        for (p = BLENDE_SCHRAUBE) {
-            translate([x0 - 1, p[0], p[1]]) rotate([0, 90, 0])
-                cylinder(d = m3_frei, h = wand + 2);
-            translate([x0 - 0.01, p[0], p[1]]) rotate([0, 90, 0])
-                cylinder(d = m3_kopf, h = 2.2);
+        for (p = PLATTE_SCHRAUBE) {
+            translate([x_aussen + seite * 1, p[0], p[1]])
+                rotate([0, dreh, 0]) cylinder(d = m3_frei, h = wand + 2);
+            translate([x_aussen + seite * 0.01, p[0], p[1]])
+                rotate([0, dreh, 0]) cylinder(d = m3_kopf, h = 2.2);
         }
-        // Luftschlitze oberhalb des Fensters
+        // Luftschlitze: links oberhalb des Fensters, rechts ueber die
+        // ganze Hoehe
         for (y = LUEFT_Y)
-            schlitz_yz(y, 35, z_top - 10, 3.5, x0 - 1, wand + 2);
+            schlitz_yz(y, seite < 0 ? 35 : 30, z_top - 10, 3.5,
+                       xa - 1, wand + 2);
+        // optionaler Schlitz fuer eine Karte in der Winkelbuchse (Slot 5)
+        if (seite > 0 && slot5_schlitz)
+            translate([xa - 1, 2, STECKHOEHE - 3])
+                cube([wand + 2, BP - 4, 12]);
     }
 }
+module blende()      seitenplatte(-1);
+module wand_rechts() seitenplatte(+1);
 
 // ================================================================== DECKEL
 module deckel() {
@@ -282,10 +373,10 @@ module deckel() {
                 translate([0, 0, z_top - kragen]) linear_extrude(kragen)
                     difference() { offset(r = -0.3) p_innen();
                                    offset(r = -2.3) p_innen(); }
-                // Platz fuer die Gewindedome des Rahmens
+                // Platz fuer die Gewindedome der Laengswaende
                 for (p = DECKEL_SCHRAUBE)
                     translate([p[0], p[1], z_top - kragen - 1])
-                        cylinder(d = 13, h = kragen + 2);
+                        cylinder(d = dom_deckel_d + 2, h = kragen + 2);
             }
         }
         for (p = DECKEL_SCHRAUBE) {
@@ -306,17 +397,19 @@ module deckel() {
 }
 
 // =================================================================== PROBE
-// Testteil: ein Fuehrungskanal und ein Dom wie im Boden. Erst drucken,
-// Kartenkante und M3 pruefen, dann die grossen Teile starten.
+// Testteil: ein Fuehrungskanal mit Einfuehrtrichter und ein Dom wie im
+// Boden. Erst drucken, Kartenkante und M3 pruefen, dann die grossen
+// Teile starten.
 module probe() {
     union() {
         cube([30, wand, 40]);                       // Wandstueck
         translate([0, wand, 0])
             for (s = [-1, 1]) {
                 xm = 15 + s * (kanal + steg_b) / 2;
-                _steg_abschnitt(xm, 0, +1, 2, 0.01, 4.2, steg_t);
-                _steg_abschnitt(xm, 0, +1, 4.2, steg_t, 32, steg_t);
-                _steg_abschnitt(xm, 0, +1, 32, steg_t, 40, 0.6);
+                _steg_abschnitt(xm, xm, 0, +1, 2, 0.01, 4.2, steg_t);
+                _steg_abschnitt(xm, xm, 0, +1, 4.2, steg_t, 30, steg_t);
+                _steg_abschnitt(xm, xm + s * trichter_x, 0, +1,
+                                30, steg_t, 40, 0.6);
             }
         translate([30, 0, 0]) cube([14, 14, 4]);    // Sockel
         translate([37, 7, 4]) difference() {        // Dom wie im Boden
@@ -348,8 +441,10 @@ module karte_dummy(xc) {
 // ============================================================ Zusammenbau
 module assembly() {
     color("gainsboro")      boden();
-    color("silver")         rahmen();
+    color("silver")         wand_vorn();
+    color("silver")         wand_hinten();
     color("lightsteelblue") blende();
+    color("lightsteelblue") wand_rechts();
     color("gainsboro")      deckel();
     if (zeige_hardware) {
         backplane_dummy();
@@ -360,14 +455,22 @@ module assembly() {
 // =============================================================== Ausgabe
 // Die Druckteile werden so gelegt, dass sie mit z = 0 auf dem Druckbett
 // aufliegen und vollstaendig im positiven x/y-Bereich stehen (sonst legen
-// Slicer das Teil unter oder neben das Bett).
+// Slicer das Teil unter oder neben das Bett). Die beiden Laengswaende
+// liegen auf ihrer Aussenflaeche, die Seitenplatten auf ihrer Rueckseite.
 if (teil == "alle")        assembly();
 else if (teil == "boden")  translate([-x0, -y0, -z_bo_bot]) boden();
-else if (teil == "rahmen") translate([-x0, -y0, -z_bo_top]) rahmen();
-// Blende flach auf die Rueckseite: x' = z, z' = -x
-else if (teil == "blende") translate([-(z_bo_top + 0.2), -(yi0 + 0.2), x0 + wand - 0.2])
-                               rotate([0, 90, 0]) blende();
-// Deckel auf die Aussenseite, der Kragen zeigt nach oben
+else if (teil == "wand_vorn")
+    translate([-x0, z_top, -y0]) rotate([90, 0, 0]) wand_vorn();
+else if (teil == "wand_hinten")
+    translate([-x0, -z_bo_top, y1]) rotate([-90, 0, 0]) wand_hinten();
+else if (teil == "blende")
+    translate([-(z_bo_top + platte_luft), -(yi0 + platte_luft),
+               x0 + wand - platte_luft])
+        rotate([0, 90, 0]) blende();
+else if (teil == "wand_rechts")
+    translate([z_top - platte_luft, -(yi0 + platte_luft),
+               -(xi1 + platte_luft)])
+        rotate([0, -90, 0]) wand_rechts();
 else if (teil == "deckel") translate([-x0, y1, z_top + deckel_d])
                                rotate([180, 0, 0]) deckel();
 else if (teil == "probe")  probe();

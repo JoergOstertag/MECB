@@ -33,3 +33,96 @@ und die Passung am Geraet (siehe TODO).
 MECB_Gehaeuse.stl (Zusammenbau) wurde ohne die Hardware-Dummys neu
 erzeugt - eine STL-Datei kennt keine Farben, Backplane und Karten
 waeren darin nicht von Gehaeuseteilen zu unterscheiden.
+
+============================================================
+2026-11-22 15:40
+============================================================
+Rahmen in vier Seitenteile geteilt; Materialkonflikt Rahmen/Boden von
+206 mm3 behoben; Einfuehrtrichter der Kartenfuehrung auch in x.
+
+Prompt: "kann man den Rahmen des gehäuse aus 4 Teilen machen?" und
+"Hast du darauf geachtet, daß sich die Platine und die Steckkarten auch
+leicht einstecken lassen?"
+
+Nutzerentscheidung 2026-11-22 (AskUserQuestion): Teilung in vier
+Seitenwaende, Grund "Handhabung und Druckrisiko" - nicht die Bauhoehe
+des Druckers, sondern das Risiko, einen 135 mm hohen Druck nach vielen
+Stunden zu verlieren.
+
+TEILUNG. Der Rahmen ist jetzt wand_vorn, wand_hinten (Laengswaende mit
+Kartenfuehrung) sowie blende und wand_rechts (Seitenplatten). Die
+senkrechte Teilung liegt an den Ecken, der Kartenkanal bekommt also
+keinen Stoss. Die Laengswaende tragen alle Gewinde; Boden und Deckel
+klammern sie, die beiden Seitenplatten ziehen sie zusammen. Umgesetzt
+ueber rahmen_voll() plus intersection() mit einem y-Band (wand_tief =
+12 mm) - damit kann die Teilung nicht von der Zusammenbau-Ansicht
+abweichen.
+
+Die rechte Wand war bisher ein Teil des Rahmens; sie ist jetzt eine
+Seitenplatte wie die Blende, mit denselben vier Schraubpunkten
+(PLATTE_SCHRAUBE, vorher BLENDE_SCHRAUBE) und eigenen Saeulen am
+rechten Wandende. Ihre Lueftungsschlitze und der optionale
+slot5_schlitz sind mitgewandert. Die beiden rechten Deckelschrauben
+muessten sonst in die Oeffnung der Platte ragen (Dom 11 mm) und sitzen
+daher bei xi1 - 6 statt xi1 - 3.5.
+
+BEFUND 1, BEHOBEN: Rahmen und Boden durchdrangen sich um 206 mm3. Die
+vier Gewindedome der Laengswaende (10 mm) standen im Positionierrand
+des Bodens (2 mm breit, 3 mm hoch, gleiche z-Lage). Folge waere
+gewesen: der Rahmen setzt 3 mm zu hoch auf, damit stimmen Steckhoehe
+und Kartenlage nicht mehr, und die Bodenschrauben greifen nicht. Der
+Positionierrand ist jetzt an den vier Stellen um dom_boden_d + 0.8
+ausgespart. Nachgemessen: Verschnitt wand_vorn/boden hat Volumen 0,
+also nur noch beruehrende Flaeche.
+
+BEFUND 2, DOKUMENTIERT: Die Backplane laesst sich nicht von oben durch
+den zusammengebauten Rahmen einsetzen - ihr Einschubweg ist mit
+19 695 mm3 durch Fuehrungsstege und Saeulen versperrt. Ausserdem liegen
+zwei der sechs Backplane-Schrauben (x = 3.81, y = 3.81 und 96.012)
+unter den Saeulen, ein Schrauber kommt dort nicht hin (6088 mm3
+versperrt). Beides ist kein Fehler, sondern eine Reihenfolge: Backplane
+zuerst auf den Boden, Waende zuletzt. Steht jetzt im Kopf der .scad und
+im README. Mit der Teilung in vier Waende ist es ohnehin entschaerft.
+
+EINSTECKEN DER KARTEN. Der Kanal ist 3.0 mm breit bei 1.6 mm Karte
+(0.7 mm je Seite), die Stege greifen 1.6 mm je Seite ueber die
+Kartenkante. Der Einfuehrtrichter zog sich bisher nur in y zurueck, die
+Kanalbreite blieb bis oben 3.0 mm - man musste die Kante also genau
+treffen. Jetzt weicht der Steg auf den obersten 10 mm (trichter_z) um
+0.8 mm (trichter_x) nach aussen aus: oben 4.6 mm, unten 3.0 mm. Das
+Testteil "probe" hat den Trichter mit.
+
+Verifikation (OpenSCAD, Verschnitt-Tests mit $fn = 16, Volumen aus der
+STL-Datei gerechnet):
+  wand_vorn / wand_hinten     leer
+  wand_vorn / boden           Volumen 0 (Beruehrflaeche)   vorher 206 mm3
+  wand_vorn / deckel          Volumen 0 (Beruehrflaeche)
+  wand_vorn / blende          leer
+  wand_vorn / wand_rechts     leer
+  wand_vorn / Karten          leer
+  wand_vorn / Backplane       leer
+  wand_rechts / Backplane     leer
+  wand_rechts / Karten        leer
+  boden / Backplane           leer
+  Weg der Karten nach oben    frei
+Materialbilanz der Teilung: wand_vorn 62123.08 + wand_hinten 62218.89 =
+124341.97 mm3 gegen rahmen_voll 124342.05 mm3, Differenz 0.08 mm3
+(Triangulierungsrauschen, 0.00007 Prozent) - die Teilung verliert
+nichts.
+
+Alle sieben Druckteile exportiert, jedes meldet "Volumes: 2" (ein
+geschlossener Koerper). Bauhoehen in Drucklage: boden 15.00,
+wand_vorn 15.00, wand_hinten 15.00, blende 2.60, wand_rechts 2.60,
+deckel 6.00, probe 40.01 mm. Groesster Bettbedarf 134.92 mm. Damit ist
+TODO-Punkt 4 (Rahmen braucht 135 mm Bauhoehe) erledigt und entfallen.
+MECB_Gehaeuse_rahmen.stl ist geloescht - das Teil gibt es nicht mehr.
+
+Nicht geprueft: der Druck selbst, die Passung am Geraet und die
+Steifigkeit der Verbindung (siehe TODO).
+
+Aufruf der Verschnitt-Tests (Testdateien liegen nicht im Repository):
+  openscad -o k.stl -D 'teil="pruefung"' -D '$fn=16' \
+           -D 'test="vorn_boden"' pruef.scad
+  # pruef.scad: include <MECB_Gehaeuse.scad> plus eine intersection()
+  # je Teilepaar; teil="pruefung" trifft keinen Zweig der Ausgabe, die
+  # eingebundene Datei zeichnet also nichts.

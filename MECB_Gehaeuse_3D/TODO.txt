@@ -7,13 +7,15 @@ Letzter Security-Scan: entfaellt (kein ausfuehrbarer Code)
 UEBERSICHT
   1. STECKHOEHE 13.5 mm - aus DIN 41612 uebernommen, nicht gemessen
   2. UEBERSTAND_SLOT5 6.0 mm - aus einem Foto geschaetzt, nicht gemessen
+  5. Nur 5 mm ueber der Kartenoberkante - Entscheidung des Nutzers offen
+  6. Seitenplatten 135 x 101 x 3 mm - Verzug beim Druck nicht bewertet
 
 PRUEFLISTE - UEBERSICHT
   Hardware (eigener MECB-Aufbau)
   1b. Steckhoehe am zusammengesteckten Aufbau nachmessen
   2b. Ueberstand der Winkelbuchse von Slot 5 nachmessen
-  3.  Testteil "probe" drucken: Kartenkanal und M3-Gewinde pruefen
-  4.  Rahmen braucht 135 mm Bauhoehe - gegen den eigenen Drucker pruefen
+  3.  Testteil "probe" drucken: Kanal, Einfuehrtrichter, M3-Gewinde
+  7.  Steifigkeit der vierteiligen Verbindung am gedruckten Teil pruefen
 
 ------------------------------------------------------------
 
@@ -29,6 +31,28 @@ PRUEFLISTE - UEBERSICHT
        (ca. 4 mm plus Reserve). Zu klein = Gehaeuse schliesst nicht.
        Loesung: messen, Wert eintragen, STLs neu erzeugen.
 
+[ ] 5. Griffraum ueber den Karten - ENTSCHEIDUNG DES NUTZERS. kopffrei
+       ist 8.0 mm; der Deckelkragen taucht 3 mm ein, also bleiben ueber
+       der Kartenoberkante 5.0 mm. Der Weg nach oben ist frei geprueft,
+       eine Karte laesst sich also herausziehen - aber mit 5 mm hat man
+       kaum etwas zu fassen, und eine DIN-41612-Verbindung braucht
+       Kraft. Drei Wege:
+         a) kopffrei auf 15 mm - bequem, Gehaeuse 7 mm hoeher
+            (Laengswaende dann 141.9 statt 134.9 mm in Drucklage).
+         b) Griffmulden in den Deckel ueber jedem Steckplatz - Hoehe
+            bleibt, Deckel wird aufwendiger.
+         c) so lassen und zum Kartenwechsel eine Seitenplatte abnehmen -
+            kostet nichts, dafuer vier Schrauben je Wechsel.
+       Keiner davon ist ohne Nutzerentscheidung umzusetzen, weil sich
+       Aussenmass bzw. Bedienung aendern.
+
+[ ] 6. Die beiden Seitenplatten (blende, wand_rechts) sind 134.5 x
+       100.6 mm bei 2.6 mm Dicke und werden flach gedruckt. Ob eine so
+       grosse duenne Platte sich ohne Versteifung verzieht, ist nicht
+       bewertet - bei Verzug schliesst das Gehaeuse nicht sauber.
+       Loesung, falls es auftritt: umlaufender Steg innen (2 x 3 mm)
+       oder Dicke auf 4 mm. Erst nach dem Druck entscheiden.
+
 ------------------------------------------------------------
 PRUEFLISTE
 ------------------------------------------------------------
@@ -42,10 +66,16 @@ Hardware (eigener MECB-Aufbau)
         Platinenkante nachmessen.
 
 [ ] 3.  MECB_Gehaeuse_probe.stl drucken und pruefen: laeuft eine
-        1.6-mm-Karte sauber im Kanal (kanal = 3.0 mm), schneidet sich
-        eine M3-Schraube im Dom ein (m3_kern = 2.7 mm)? Erst danach die
-        grossen Teile starten.
+        1.6-mm-Karte sauber im Kanal (3.0 mm unten, 4.6 mm am
+        Einfuehrtrichter oben), faengt der Trichter die Karte wirklich,
+        schneidet sich eine M3-Schraube im Dom ein (Kernloch 2.7 mm)?
+        Erst danach die grossen Teile starten.
 
-[ ] 4.  Der Rahmen ist 134.9 mm hoch und braucht damit 135 mm Bauhoehe.
-        Gegen den eigenen Drucker pruefen; passt es nicht, muss der
-        Rahmen geteilt werden (noch nicht vorgesehen).
+[ ] 7.  Steifigkeit der vierteiligen Verbindung. Rechnerisch ist alles
+        freigaengig (Verschnitt-Tests in CHANGES.txt), aber ob die
+        beiden Laengswaende ueber Boden, Deckel und die zwei
+        Seitenplatten steif genug stehen, zeigt erst das gedruckte
+        Teil. Zu pruefen: wackelt eine Wand, wenn das Gehaeuse auf der
+        Seite liegt; sitzen die Stosskanten an den Ecken spaltfrei.
+        Falls nicht: zweites Schraubenpaar Boden -> Laengswand bei
+        x = 100, oder Nut/Feder an den Eckstoessen.

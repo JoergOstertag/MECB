@@ -32,7 +32,7 @@ PRUEFLISTE - UEBERSICHT
        Loesung: messen, Wert eintragen, STLs neu erzeugen.
 
 [ ] 6. Die beiden Seitenplatten (blende, wand_rechts) sind 134.5 x
-       100.6 mm bei 2.6 mm Dicke und werden flach gedruckt. Ob eine so
+       100.6 mm bei 3.0 mm Dicke und werden flach gedruckt. Ob eine so
        grosse duenne Platte sich ohne Versteifung verzieht, ist nicht
        bewertet - bei Verzug schliesst das Gehaeuse nicht sauber.
        Loesung, falls es auftritt: umlaufender Steg innen (2 x 3 mm)

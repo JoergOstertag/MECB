@@ -6,7 +6,7 @@ Quelle ist `MECB_Gehaeuse.scad`; die STL-Dateien daneben sind daraus
 erzeugt und koennen jederzeit neu erzeugt werden.
 
 Der Rahmen besteht aus **vier Seitenteilen** (senkrechte Teilung an den
-Ecken). Kein Teil ist hoeher als 15 mm in Drucklage - vorher brauchte
+Ecken). Kein Teil ist in Drucklage hoeher als 17 mm - vorher brauchte
 der einteilige Rahmen 135 mm Bauhoehe.
 
 ## Dateien
@@ -15,7 +15,7 @@ der einteilige Rahmen 135 mm Bauhoehe.
 |--------------------------------|-------------------------------------------|
 | MECB_Gehaeuse.scad             | Quelle, alle Masse und Parameter           |
 | MECB_Gehaeuse.stl              | Zusammenbau-Ansicht (nicht zum Drucken)    |
-| MECB_Gehaeuse_boden.stl        | Bodenplatte mit Backplane-Domen            |
+| MECB_Gehaeuse_boden.stl        | Bodenplatte 5 mm, mit Backplane-Domen      |
 | MECB_Gehaeuse_wand_vorn.stl    | Laengswand vorn, mit Kartenfuehrung        |
 | MECB_Gehaeuse_wand_hinten.stl  | Laengswand hinten, mit Kartenfuehrung      |
 | MECB_Gehaeuse_blende.stl       | linke Seite, Fenster fuer das Netzteil     |
@@ -30,15 +30,16 @@ das Druckbett, x und y sind positiv.
 
 | Teil        |     x |     y |    z | Hinweis zum Druck               |
 |-------------|------:|------:|-----:|---------------------------------|
-| boden       | 112.4 | 107.0 | 15.0 | flach, Dome nach oben           |
+| boden       | 112.4 | 107.0 | 17.0 | flach, Dome nach oben           |
 | wand_vorn   | 112.4 | 134.9 | 15.0 | liegt auf der Aussenflaeche     |
 | wand_hinten | 112.4 | 134.9 | 15.0 | liegt auf der Aussenflaeche     |
-| blende      | 134.5 | 100.6 |  2.6 | liegt flach, Fenster unten      |
-| wand_rechts | 134.5 | 100.6 |  2.6 | liegt flach                     |
+| blende      | 134.5 | 100.6 |  3.0 | liegt flach, Fenster unten      |
+| wand_rechts | 134.5 | 100.6 |  3.0 | liegt flach                     |
 | deckel      | 112.4 | 107.0 |  6.0 | Aussenseite unten, Kragen oben  |
 | probe       |  44.0 |  14.0 | 40.0 | zuerst drucken                  |
 
-Groesster Bettbedarf: 134.9 mm in einer Achse. Kein Teil braucht
+Aussenmass des Gehaeuses: 112.4 x 107.0 x 142.9 mm. Groesster
+Bettbedarf: 134.9 mm in einer Achse. Kein Teil braucht
 Stuetzmaterial; alle Anbauteile (Stege, Saeulen, Dome) zeigen in
 Drucklage nach oben.
 
@@ -47,16 +48,47 @@ Drucklage nach oben.
 Die beiden Laengswaende tragen alle Gewinde. Boden und Deckel klammern
 sie von unten und oben, die beiden Seitenplatten ziehen sie zusammen.
 
-| Verbindung              | Schrauben | Gewinde sitzt in            |
-|-------------------------|-----------|-----------------------------|
-| Backplane -> Boden      | 6x M3x8   | Dome des Bodens             |
-| Laengswand -> Boden     | 4x M3x12  | Dom der Laengswand          |
-| Deckel -> Laengswand    | 4x M3x12  | Eckdom der Laengswand       |
-| blende -> Laengswand    | 4x M3x12  | Saeule am linken Wandende   |
-| wand_rechts -> Laengswand | 4x M3x12 | Saeule am rechten Wandende |
+| Verbindung                | Schrauben | Kopf                      |
+|---------------------------|-----------|---------------------------|
+| Backplane -> Boden        | 6x M3x8   | auf der Backplane         |
+| Laengswand -> Boden       | 4x M3x12  | in der Senkung des Bodens |
+| Deckel -> Laengswand      | 4x M3x12  | liegt oben auf            |
+| blende -> Laengswand      | 4x M3x10  | liegt aussen auf          |
+| wand_rechts -> Laengswand | 4x M3x10  | liegt aussen auf          |
+
+Die Seitenplatten brauchen M3x10, nicht M3x12: 3 mm Platte plus 9 mm
+Gewinde waeren 1 mm mehr, als die Bohrung in der Saeule tief ist (8 mm).
 
 Alle Schrauben schneiden sich selbst in den Kunststoff (Kernloch
 2.7 mm).
+
+## Mindestdicken
+
+Damit im Betrieb nichts ausbricht, ist jede tragende Stelle auf ihr
+duennstes Mass hin geprueft. Die kritische Groesse ist nicht die Wand,
+sondern das Material, das einen Schraubenkopf haelt - gemessen an der
+Geometrie, nicht aus den Parametern gerechnet:
+
+| Stelle                            | vorher  | jetzt   |
+|-----------------------------------|--------:|--------:|
+| Wand, Deckel                      | 3.00 mm | 3.00 mm |
+| Seitenplatten (blende, rechts)    | 2.60 mm | 3.00 mm |
+| Boden                             | 3.00 mm | 5.00 mm |
+| Material unter Kopfsenkung, Boden | 0.81 mm | 2.01 mm |
+| Material am Schraubloch, Deckel   | 0.81 mm | 3.00 mm |
+| Material am Schraubloch, Platten  | 0.41 mm | 3.00 mm |
+| Wandung um ein M3-Gewinde, Dome   | 2.15 mm | 2.65 mm |
+| Wandung um ein M3-Gewinde, Saeule | 2.15 mm | 3.15 mm |
+
+Die Senkung sitzt nur noch **im Boden** - dort muss sie sein, damit das
+Gehaeuse ohne Fuesse flach steht; deshalb ist der Boden 5 mm dick, so
+dass unter der 3 mm tiefen Senkung noch `min_rest` = 2 mm stehen. In
+Deckel und Seitenplatten gibt es keine Senkung mehr, dort tragen die
+vollen 3 mm und die Zylinderkoepfe liegen auf.
+
+Die Seitenplatten waren 2.6 statt 3.0 mm, weil `platte_luft` auch von
+der Dicke abgezogen wurde. Luft braucht eine Platte aber nur in y und
+z; x ist ihre Einschubrichtung, dort setzt sie buendig auf.
 
 ## Reihenfolge des Zusammenbaus
 

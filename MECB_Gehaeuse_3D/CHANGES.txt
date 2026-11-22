@@ -194,3 +194,72 @@ geprueft: 35661.9727 / 25553.9125 / 62198.6416 / 62294.3014 /
 Facetten-Reihenfolge von OpenSCAD unterscheidet sich zwischen zwei
 Laeufen. Diese Bytes sind kein Inhalt und blaehen den Diff um ueber
 100 000 Zeilen.
+
+============================================================
+2026-11-22 18:32
+============================================================
+Mindestdicken: Material unter den Schraubenkoepfen von 0.41 / 0.81 mm
+auf mindestens 2.0 mm gebracht.
+
+Prompt: "Schaue daß die Gehäuse Wände eine Mindestdicke haben, damit es
+nicht bei der Verwendung ausbricht!"
+
+Gemessen wurde nicht gerechnet: ein 4.5-mm-Zylinder auf der
+Schraubenachse, mit dem Teil verschnitten - was uebrig bleibt, ist
+genau das Material, das den Kopf haelt. Die Waende selbst waren mit
+3 mm in Ordnung, die Kopfsenkungen (6.4 mm Durchmesser, 2.2 mm tief)
+frassen die Platten aber fast durch:
+
+  Stelle                             vorher    jetzt
+  Boden, unter der Senkung           0.81 mm   2.01 mm
+  Deckel, am Schraubloch             0.81 mm   3.00 mm
+  blende, am Schraubloch             0.41 mm   3.00 mm
+  wand_rechts, am Schraubloch        0.41 mm   3.00 mm
+  Seitenplatten, Dicke               2.60 mm   3.00 mm
+  Boden, Dicke                       3.00 mm   5.00 mm
+  Wandung um M3-Gewinde, Dome        2.15 mm   2.65 mm
+  Wandung um M3-Gewinde, Saeule      2.15 mm   3.15 mm
+
+Nutzerentscheidung 2026-11-22 (AskUserQuestion) war "Gemischt: nur
+Boden dick": boden_d von 3.0 auf 5.0 mit voller Senkung (3 mm, darunter
+min_rest = 2 mm), Deckel und Seitenplatten bei 3 mm OHNE Senkung - die
+Zylinderkoepfe liegen dort auf. Begruendung der Mischung: die Senkung
+ist nur im Boden noetig, damit das Gehaeuse ohne Fuesse flach steht.
+
+Die Seitenplatten waren 2.6 statt 3.0 mm dick, weil platte_luft auch
+von der DICKE abgezogen wurde. Luft braucht eine Platte nur in y und z
+- x ist ihre Einschubrichtung, dort setzt sie buendig in der Oeffnung
+auf. Die Platten fuellen die Wandoeffnung jetzt ganz aus; der Verschnitt
+mit den Laengswaenden ist leer (reine Flaechenberuehrung).
+
+Zwei Nebenfixe aus demselben Grundsatz: die Abstandsdome der Backplane
+von 7 auf 8 mm Aussendurchmesser (Wandung um das 2.7-mm-Kernloch 2.15
+-> 2.65 mm) und die Gewindesaeulen 1 mm tiefer, saeule_y von 7 auf 8
+(Wandung 2.15 -> 3.15 mm). Das Testteil "probe" hat den groesseren Dom
+mit.
+
+SCHRAUBENLAENGE GEAENDERT: die Seitenplatten brauchen jetzt M3x10, nicht
+M3x12. Ohne Senkung sitzt der Kopf auf der 3 mm dicken Platte, 12 mm
+Schraube wollen also 9 mm Gewinde - die Bohrung in der Saeule ist aber
+nur 8 mm tief, die Schraube wuerde aufsetzen. Boden (12 mm: 3 Senkung +
+2 Rest + 7 im Dom) und Deckel (12 mm: 3 Platte + 9 im Dom, Bohrung
+11 mm) bleiben bei M3x12.
+
+Aussenmass dadurch 112.4 x 107.0 x 142.9 mm (vorher 140.9); der Boden
+ist in Drucklage 17.0 statt 15.0 mm hoch, bleibt also das hoechste
+Druckteil.
+
+Verifikation (OpenSCAD, Verschnitt je Teilepaar, Volumen aus der STL):
+  vorn/hinten, vorn/blende, vorn/rechts, vorn/Karten, vorn/Backplane,
+  boden/blende, boden/rechts, boden/Backplane, deckel/blende,
+  deckel/rechts, deckel/Karten, blende/rechts, rechts/Karten,
+  rechts/Backplane                                      alle leer
+  vorn/boden, vorn/deckel                               Volumen 0
+  Griffweg bis Kartenoberkante                          frei
+Alle sieben Druckteile melden "Volumes: 2". Zusammenbau 27292
+Dreiecke, 112.42 x 107.02 x 142.92 mm, "Volumes: 2" (ein
+zusammenhaengender Koerper - die buendigen Seitenplatten verschmelzen
+mit den Waenden), Renderzeit 11:04.
+
+Nicht geprueft: der Druck selbst. Ob 3 mm Platte und 5 mm Boden im
+Betrieb halten, zeigt erst das gedruckte Teil (TODO-Punkt 7).

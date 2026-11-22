@@ -126,3 +126,71 @@ Aufruf der Verschnitt-Tests (Testdateien liegen nicht im Repository):
   # pruef.scad: include <MECB_Gehaeuse.scad> plus eine intersection()
   # je Teilepaar; teil="pruefung" trifft keinen Zweig der Ausgabe, die
   # eingebundene Datei zeichnet also nichts.
+
+============================================================
+2026-11-22 16:26
+============================================================
+Griffoeffnungen im Deckel ueber jedem Steckplatz; Schlitzmuster des
+Deckels dafuer neu geordnet.
+
+Prompt: "Hast du darauf geachtet, daß sich die Platine und die
+Steckkarten auch leicht einstecken lassen?" (Nachgang) und
+"Merke: bitte immer auch gleich die stl files erzeugen nachdem das
+openscad file fertig ist"
+
+Nutzerentscheidung 2026-11-22 (AskUserQuestion zu TODO-Punkt 5):
+"Griffmulden in den Deckel" - nicht kopffrei erhoehen (haette das
+Gehaeuse 7 mm hoeher gemacht) und nicht beim Abnehmen einer
+Seitenplatte bleiben.
+
+Je Steckplatz eine Oeffnung von 16 x 34 mm mit 4 mm Eckradius, mittig
+in y. 16 mm sind zwei Fingerbreiten; bei 20.32 mm Steckplatz-Teilung
+bleiben 4.32 mm Material zwischen zwei Oeffnungen stehen. Der Griffweg
+ist 11 mm tief (kopffrei 8 mm plus deckel_d 3 mm).
+
+Das Schlitzmuster des Deckels musste mit: die Luftschlitze standen
+alle 9 mm in EINER Reihe quer ueber den Deckel, die Steckplaetze
+sitzen alle 20.32 mm. In derselben y-Lage waere zwischen Schlitz und
+Griffoeffnung an mehreren Stellen weniger als 1 mm Material stehen
+geblieben (bei x = 21 sogar 1.57 mm Achsabstand zur Slot-Mitte, der
+Schlitz haette die Oeffnung geschnitten). Die Schlitze liegen jetzt in
+zwei y-Baendern VOR und HINTER den Griffoeffnungen (Mitten 18.21 und
+81.61, Laenge 24.4 mm), 2.5 mm Luft zur Oeffnung; ihre x-Lage ist damit
+frei von der Slot-Teilung.
+
+GRENZE DER LOESUNG, dokumentiert: eine Karte kann bei aufgesetztem
+Deckel nur um die 8 mm kopffrei steigen - durch die 34 mm lange
+Oeffnung passt eine 99.8 mm lange Karte nicht hindurch. Ob 8 mm Hub
+eine DIN-41612-Paarung schon trennt, haengt an deren
+Steckkontaktlaenge und ist nicht geprueft; das ist der neue
+TODO-Punkt 8. Zum Kartenwechsel bleibt es beim Deckel abnehmen. Die
+Oeffnung leistet: Kartenoberkante fassen, Karte niederdruecken, Karte
+zum Loesen anheben.
+
+Verifikation (OpenSCAD, Verschnitt-Tests, Volumen aus der STL
+gerechnet):
+  Griffweg -> Kartenoberkante   frei (gerundeter Pruefkoerper, $fn=32)
+  deckel / Karten               Volumen 0
+  deckel / wand_vorn            Volumen 0
+  Griffweg / wand_vorn          Volumen 0
+Ein erster Lauf mit eckigem Pruefkoerper meldete 3.53 mm3 im Griffweg.
+Das war der Pruefkoerper, nicht das Teil: seine scharfen Ecken ragten
+in den 4-mm-Radius der Oeffnung (4 Ecken x 4 Slots x 3 mm Dicke x
+0.07 mm2). Mit gleich gerundetem Pruefkoerper ist der Weg leer.
+
+Alle sieben Druckteile und die Zusammenbau-Ansicht neu erzeugt (neue
+Nutzerregel: STL-Dateien gehoeren in denselben Arbeitsschritt wie die
+Quelle, nicht in einen spaeteren). Jedes Druckteil meldet
+"Volumes: 2". Deckel 6828 Dreiecke, 112.42 x 107.02 x 6.00 mm, Volumen
+25771.71 mm3; die uebrigen Teile unveraendert in den Aussenmassen.
+Zusammenbau 29456 Dreiecke, 112.42 x 107.02 x 140.92 mm,
+Renderzeit 6:20.
+
+Nachtrag zur Erzeugung: boden, blende, wand_vorn, wand_hinten,
+wand_rechts und probe wurden mitgerechnet, sind aber nicht im Commit -
+ihre Geometrie ist unveraendert (Volumen und Dreieckszahl gegen HEAD
+geprueft: 35661.9727 / 25553.9125 / 62198.6416 / 62294.3014 /
+30498.6844 / 5153.5335 mm3, je gleiche Dreieckszahl), nur die
+Facetten-Reihenfolge von OpenSCAD unterscheidet sich zwischen zwei
+Laeufen. Diese Bytes sind kein Inhalt und blaehen den Diff um ueber
+100 000 Zeilen.

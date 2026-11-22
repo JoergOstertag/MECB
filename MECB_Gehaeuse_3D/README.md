@@ -20,7 +20,7 @@ der einteilige Rahmen 135 mm Bauhoehe.
 | MECB_Gehaeuse_wand_hinten.stl  | Laengswand hinten, mit Kartenfuehrung      |
 | MECB_Gehaeuse_blende.stl       | linke Seite, Fenster fuer das Netzteil     |
 | MECB_Gehaeuse_wand_rechts.stl  | rechte Seite, Lueftung                     |
-| MECB_Gehaeuse_deckel.stl       | Deckel                                    |
+| MECB_Gehaeuse_deckel.stl       | Deckel mit Griffoeffnungen                |
 | MECB_Gehaeuse_probe.stl        | Testteil: ein Fuehrungskanal und ein Dom   |
 
 Jedes Druckteil liegt in seiner STL-Datei schon in Drucklage: z = 0 ist
@@ -84,6 +84,7 @@ Problem, weil die Waende zuletzt kommen.
 | Kanalbreite oben (Einfuehrtrichter) | 4.6 mm                      |
 | Fuehrungstiefe an der Kartenkante | 1.6 mm je Seite               |
 | Luft ueber der Kartenoberkante    | 8.0 mm, mit Deckel 5.0 mm     |
+| Griffoeffnung im Deckel je Slot   | 16 x 34 mm, Griffweg 11 mm    |
 
 Der Einfuehrtrichter sitzt auf den obersten 10 mm der Stege: dort weicht
 der Steg in x um 0.8 mm nach aussen (der Kanal wird breiter) und zieht
@@ -91,10 +92,31 @@ sich in y auf 0.6 mm zurueck. Man muss die Kartenkante beim Einstecken
 also nicht auf 3.0 mm genau treffen.
 
 Der senkrechte Weg einer Karte aus dem Steckplatz heraus ist frei
-geprueft - eine Karte laesst sich bei abgenommenem Deckel gerade nach
-oben herausziehen. Zum Anfassen bleiben ueber der Kartenoberkante aber
-nur 8 mm (mit aufgesetztem Deckel 5 mm); fuer bequemes Ziehen ist das
-knapp, siehe TODO.txt Punkt 5.
+geprueft - eine Karte laesst sich gerade nach oben herausziehen.
+
+Zum Anfassen bleiben ueber der Kartenoberkante nur 8 mm. Deshalb hat
+der Deckel ueber jedem Steckplatz eine GRIFFOEFFNUNG von 16 x 34 mm
+(Nutzerentscheidung 2026-11-22). Durch sie greift man die
+Kartenoberkante bei aufgesetztem Deckel, kann eine Karte niederdruecken
+und sie zum Loesen anheben. Der Griffweg ist 11 mm tief (8 mm Luft plus
+3 mm Deckel) und bis auf die Kartenoberkante frei geprueft; zwischen
+zwei Oeffnungen bleiben bei 20.32 mm Steckplatz-Teilung 4.32 mm
+Material stehen.
+
+WAS DIE OEFFNUNG NICHT LEISTET: eine Karte ganz herausziehen, ohne den
+Deckel abzunehmen. Durch die 34 mm lange Oeffnung passt eine 99.8 mm
+lange Karte nicht hindurch, die Karte kann also nur um die 8 mm Luft
+steigen, bis sie unter den Deckel stoesst. Ob das eine DIN-41612-
+Paarung bereits trennt, haengt an deren Steckkontaktlaenge und ist
+nicht geprueft (siehe TODO.txt Punkt 8). Zum Kartenwechsel bleibt es
+beim Deckel abnehmen - vier Schrauben.
+
+Die Luftschlitze des Deckels liegen dafuer jetzt in zwei Baendern vor
+und hinter den Griffoeffnungen (y = 6..30.4 und 69.4..93.8). Vorher
+standen sie alle 9 mm in einer Reihe quer ueber den Deckel; in
+derselben y-Lage wie die Griffoeffnungen waere an mehreren Stellen
+weniger als 1 mm Material stehen geblieben, weil die Steckplaetze alle
+20.32 mm sitzen.
 
 ## STL-Dateien neu erzeugen
 

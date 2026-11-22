@@ -95,6 +95,16 @@ blende_fenster_z = [0, 22];   // ... z von..bis (USB-C, Hohlbuchse, Schalter)
 slot5_schlitz = false;  // Schlitz in wand_rechts fuer die Winkelbuchse
 deckel_art  = "luft";   // [luft, offen, zu]
 
+/* [Griffoeffnungen im Deckel] */
+// Ueber jedem Steckplatz eine Oeffnung, durch die man die
+// Kartenoberkante fasst. Sie liegt kopffrei (8 mm) unter der
+// Deckelunterseite, der Griffweg ist also 8 + deckel_d = 11 mm tief -
+// deshalb muss die Oeffnung breit genug fuer zwei Finger sein.
+// 16 mm bei 20.32 mm Steckplatz-Teilung lassen 4.3 mm Material stehen.
+griff_x     = 16.0;     // Breite in x (Kartenrichtung)
+griff_y     = 34.0;     // Laenge in y
+griff_r     = 4.0;      // Eckradius der Oeffnung
+
 $fn = 48;
 
 // ---------------------------------------------------------------- Masse
@@ -137,6 +147,16 @@ saeule_y  = 7;          // Tiefe der Saeulen in y
 // Luftschlitze in den Fuehrungswaenden (x-Mitten zwischen den Kanaelen)
 LUEFT_X = [12, 29.6, 49.9, 70.2, 92];
 LUEFT_Y = [12 : 15 : 95];
+
+// Luftschlitze im Deckel liegen in zwei Baendern VOR und HINTER den
+// Griffoeffnungen. Die Schlitze des Deckels standen vorher alle 9 mm
+// und die Steckplaetze alle 20.32 mm - in derselben y-Lage waere
+// zwischen Schlitz und Griffoeffnung an mehreren Stellen weniger als
+// 1 mm Material stehen geblieben. Getrennte y-Baender loesen das ohne
+// Ruecksicht auf die x-Lage. 2.5 mm Luft zur Griffoeffnung.
+griff_lueft_l   = 24.4;                 // Schlitzlaenge in y
+GRIFF_LUEFT_Y   = [BP/2 - griff_y/2 - 2.5 - griff_lueft_l/2,
+                   BP/2 + griff_y/2 + 2.5 + griff_lueft_l/2];
 
 // Teilungsebene der Laengswaende: so weit reicht das tiefste Anbauteil
 // einer Wand nach innen (Deckeldom: 3.5 + 11/2 = 9 mm). 12 mm laesst
@@ -387,8 +407,16 @@ module deckel() {
         }
         if (deckel_art == "luft")
             translate([0, 0, z_top - kragen - 1])
-                linear_extrude(deckel_d + kragen + 2)
-                    for (x = [12 : 9 : 100]) schlitz_xy(x, BP/2, 70, 4);
+                linear_extrude(deckel_d + kragen + 2) {
+                    // Griffoeffnung ueber jedem Steckplatz
+                    for (xc = SLOT_X)
+                        translate([xc - griff_x/2, BP/2 - griff_y/2])
+                            rrect(griff_x, griff_y, griff_r);
+                    // Luftschlitze in den Baendern vor und hinter den
+                    // Griffoeffnungen
+                    for (x = [12 : 9 : 96]) for (ym = GRIFF_LUEFT_Y)
+                        schlitz_xy(x, ym, griff_lueft_l, 4);
+                }
         if (deckel_art == "offen")
             translate([0, 0, z_top - kragen - 1])
                 linear_extrude(deckel_d + kragen + 2)

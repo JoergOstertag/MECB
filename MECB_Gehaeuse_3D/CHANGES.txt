@@ -1,0 +1,35 @@
+============================================================
+2026-11-22 12:47
+============================================================
+Je Druckteil eine eigene STL-Datei erzeugt; Drucklage der Blende
+korrigiert.
+
+Prompt: "erzeuge mir einzel stl files fuer jedes Teil"
+
+MECB_Gehaeuse.scad kannte die Teile schon ueber den Parameter teil,
+exportiert war aber nur die Zusammenbau-Ansicht. Jetzt liegt je Teil
+eine Datei daneben (boden, rahmen, blende, deckel, probe), erzeugt mit
+openscad -D teil="<name>".
+
+Beim Nachmessen der Bounding Boxen fiel die Drucklage der Blende auf:
+rotate([0,-90,0]) drehte sie in die falsche Richtung, das Teil lag bei
+x -124.92..10.00 und z -3.40..-0.40, also unter dem Druckbett. Richtig
+ist rotate([0,90,0]) (x' = z, z' = -x) mit anschliessender
+Verschiebung. Der Ausgabeblock legt jetzt alle fuenf Druckteile mit
+z = 0 auf das Bett und in den positiven x/y-Bereich - vorher standen
+auch boden, rahmen und deckel bei x/y = -3.6.
+
+Verifikation: alle fuenf Teile mit OpenSCAD 2021.01 exportiert, jedes
+meldet "Volumes: 2" (ein geschlossener Koerper). Bounding Boxen aus den
+STL-Dateien nachgerechnet:
+  boden  112.42 x 107.02 x  15.00, z 0.00..15.00
+  rahmen 112.42 x 107.02 x 134.92, z 0.00..134.92
+  blende 134.52 x 100.62 x   2.60, z 0.00..2.60
+  deckel 112.42 x 107.02 x   6.00, z 0.00..6.00
+  probe   44.00 x  14.00 x  40.01, z 0.00..40.01
+Kein Teil mehr im negativen Bereich. Nicht geprueft: der Druck selbst
+und die Passung am Geraet (siehe TODO).
+
+MECB_Gehaeuse.stl (Zusammenbau) wurde ohne die Hardware-Dummys neu
+erzeugt - eine STL-Datei kennt keine Farben, Backplane und Karten
+waeren darin nicht von Gehaeuseteilen zu unterscheiden.

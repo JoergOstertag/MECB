@@ -1,0 +1,51 @@
+MECB-Gehaeuse - offene Punkte
+
+Letzter Logik-Check: -
+Letzter kompletter Logik-Check: -
+Letzter Security-Scan: entfaellt (kein ausfuehrbarer Code)
+
+UEBERSICHT
+  1. STECKHOEHE 13.5 mm - aus DIN 41612 uebernommen, nicht gemessen
+  2. UEBERSTAND_SLOT5 6.0 mm - aus einem Foto geschaetzt, nicht gemessen
+
+PRUEFLISTE - UEBERSICHT
+  Hardware (eigener MECB-Aufbau)
+  1b. Steckhoehe am zusammengesteckten Aufbau nachmessen
+  2b. Ueberstand der Winkelbuchse von Slot 5 nachmessen
+  3.  Testteil "probe" drucken: Kartenkanal und M3-Gewinde pruefen
+  4.  Rahmen braucht 135 mm Bauhoehe - gegen den eigenen Drucker pruefen
+
+------------------------------------------------------------
+
+[ ] 1. STECKHOEHE (MECB_Gehaeuse.scad): 13.5 mm ist die Mitte des von
+       DIN 41612 angegebenen Bereichs 12.4..14.2 mm (Harting-Katalog,
+       "Standard fixing arrangement"), kein gemessener Wert. Stimmt er
+       nicht, sitzen die Kartenfuehrungen in der falschen Hoehe.
+       Loesung: am Aufbau messen, Wert eintragen, STLs neu erzeugen.
+
+[ ] 2. UEBERSTAND_SLOT5 (MECB_Gehaeuse.scad): die abgewinkelte Buchse
+       von Slot 5 steht ueber die rechte Platinenkante hinaus. 6.0 mm
+       sind aus dem Foto MECB_Backplane_Assembled_v1.2.jpg geschaetzt
+       (ca. 4 mm plus Reserve). Zu klein = Gehaeuse schliesst nicht.
+       Loesung: messen, Wert eintragen, STLs neu erzeugen.
+
+------------------------------------------------------------
+PRUEFLISTE
+------------------------------------------------------------
+
+Hardware (eigener MECB-Aufbau)
+
+[ ] 1b. Steckhoehe am zusammengesteckten Aufbau mit dem Messschieber
+        nachmessen (Unterkante Karte ueber Backplane-Oberseite).
+
+[ ] 2b. Ueberstand der Winkelbuchse von Slot 5 ueber die rechte
+        Platinenkante nachmessen.
+
+[ ] 3.  MECB_Gehaeuse_probe.stl drucken und pruefen: laeuft eine
+        1.6-mm-Karte sauber im Kanal (kanal = 3.0 mm), schneidet sich
+        eine M3-Schraube im Dom ein (m3_kern = 2.7 mm)? Erst danach die
+        grossen Teile starten.
+
+[ ] 4.  Der Rahmen ist 134.9 mm hoch und braucht damit 135 mm Bauhoehe.
+        Gegen den eigenen Drucker pruefen; passt es nicht, muss der
+        Rahmen geteilt werden (noch nicht vorgesehen).

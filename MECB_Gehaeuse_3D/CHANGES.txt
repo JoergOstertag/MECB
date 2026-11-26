@@ -322,3 +322,41 @@ Drucker mit so grossem Bett zur Verfuegung steht, ist offen (TODO-Punkt
 9).
 
 Nicht geprueft: der Druck selbst.
+
+============================================================
+2026-11-26 09:20
+============================================================
+Druckplatten fuer das 256-mm-Bett des Bambu Lab P2S: platte1, platte2
+und platte3.
+
+Prompt: "Es soll mit einem Bamboolab-P2s Druckvolumen (256 x 256 x
+256 mm) druckbar sein" (Antwort auf die Rueckfrage zu TODO-Punkt 9)
+
+MECB_Gehaeuse_platte.stl mit allen sieben Teilen braucht 335.5 x
+274.0 mm und passt auf dieses Bett nicht. In EINEN Druck gehen die
+Teile dort auch grundsaetzlich nicht: ihre Grundflaechen sind zusammen
+82058 mm^2, ein Bett von 256 x 256 mm hat 65536 mm^2 - selbst
+lueckenloses Packen reicht nicht, kleinere Abstaende helfen also nicht.
+
+Deshalb drei Platten, gruppiert nach Form:
+  platte1  wand_vorn, wand_hinten        229.844 x 134.922 x 15.000
+  platte2  boden, deckel, probe          229.844 x 126.022 x 40.010
+  platte3  blende, wand_rechts           134.522 x 206.244 x  3.000
+Freiraum auf dem Bett: platte1 und platte2 lassen 26.2 mm in x,
+platte3 50 mm in y - genug, um die Platte im Slicer vom
+Reinigungsbereich vorn links (ca. 18 x 28 mm) wegzuschieben.
+MECB_Gehaeuse_platte.stl bleibt fuer Betten ab etwa 350 mm liegen.
+
+Verifikation (OpenSCAD 2026.07.26, Masse und Volumen aus den erzeugten
+STL-Dateien gerechnet):
+  platte1  11732 Dreiecke, 229.844 x 134.922, z ab 0, 128110.7 mm^3
+           gegen 128110.6 mm^3 (wand_vorn + wand_hinten)
+  platte2  12518 Dreiecke, 229.844 x 126.022, z ab 0,  88513.5 mm^3
+           gegen  88513.5 mm^3 (boden + deckel + probe)
+  platte3   4124 Dreiecke, 134.522 x 206.244, z ab 0,  65107.4 mm^3
+           gegen  65107.4 mm^3 (blende + wand_rechts)
+  => jede Platte hat genau das Volumen ihrer Teile, kein Teil
+     durchdringt ein anderes; alle drei liegen innerhalb 256 x 256 mm.
+
+Nicht geprueft: die Platten im Slicer selbst (kein Bambu Studio auf
+diesem Rechner) - TODO-Punkt 9, jetzt in der Pruefliste.

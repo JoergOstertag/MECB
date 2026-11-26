@@ -53,9 +53,12 @@
 /* [Was erzeugt werden soll] */
 // alle   = Zusammenbau-Ansicht, NUR zum Ansehen (davon wird keine
 //          STL-Datei erzeugt - eine solche Datei wuerde jemand drucken)
-// platte = alle sieben Druckteile nebeneinander in Drucklage, ein Druck
+// platte = alle sieben Druckteile nebeneinander in Drucklage, EIN
+//          Druck - braucht aber 336 x 275 mm Bett (Grossformat)
+// platte1..3 = dieselben Teile auf drei Platten, jede passt auf
+//          256 x 256 mm (Bambu Lab P2S)
 // sonst  = ein einzelnes Druckteil in Drucklage
-teil = "alle";          // [alle, platte, boden, wand_vorn, wand_hinten, blende, wand_rechts, deckel, probe]
+teil = "alle";          // [alle, platte, platte1, platte2, platte3, boden, wand_vorn, wand_hinten, blende, wand_rechts, deckel, probe]
 // Hardware in der Zusammenbau-Ansicht mitzeichnen
 zeige_hardware = true;
 
@@ -535,7 +538,7 @@ module druck_deckel() {
     translate([-x0, y1, z_top + deckel_d]) rotate([180, 0, 0]) deckel();
 }
 
-// ------------------------------------------------- Druckplatte (teil=platte)
+// ---------------------------------------------------------- Druckplatten
 // Alle sieben Druckteile in EINEM Modell, jedes in seiner Drucklage,
 // nebeneinander auf dem Bett. Die Grundflaechen stehen hier als Masse,
 // weil OpenSCAD die Huelle eines Teils nicht abfragen kann - sie sind
@@ -576,8 +579,43 @@ module druckplatte() {
     echo(str("Druckplatte braucht ", platte_x, " x ", platte_y, " mm Bett"));
 }
 
+// Dieselben Teile fuer ein Bett von 256 x 256 mm (Bambu Lab P2S,
+// Nutzervorgabe 2026-11-26). In EINEN Druck passen sie dort nicht: die
+// Grundflaechen sind zusammen 82058 mm^2, ein Bett hat 65536 mm^2.
+// Deshalb drei Platten, nach Bauhoehe gruppiert - so hat jede Platte
+// eine einheitliche Hoehe und laesst sich eigen einstellen.
+//   platte1  die beiden Laengswaende            229.8 x 134.9 x 15
+//   platte2  boden, deckel und probe            229.8 x 126.0 x 40
+//   platte3  die beiden Seitenplatten           134.5 x 206.2 x  3
+p1_x = 2 * fp_wand_x + platte_abstand;
+p1_y = fp_wand_y;
+p2_x = 2 * fp_wand_x + platte_abstand;
+p2_y = fp_bd_y + platte_abstand + fp_probe_y;
+p3_x = fp_platte_x;
+p3_y = 2 * fp_platte_y + platte_abstand;
+
+module druckplatte1() {
+    druck_wand_vorn();
+    translate([fp_wand_x + platte_abstand, 0, 0]) druck_wand_hinten();
+    echo(str("platte1 braucht ", p1_x, " x ", p1_y, " mm Bett"));
+}
+module druckplatte2() {
+    druck_boden();
+    translate([fp_wand_x + platte_abstand, 0, 0]) druck_deckel();
+    translate([0, fp_bd_y + platte_abstand, 0]) probe();
+    echo(str("platte2 braucht ", p2_x, " x ", p2_y, " mm Bett"));
+}
+module druckplatte3() {
+    druck_blende();
+    translate([0, fp_platte_y + platte_abstand, 0]) druck_wand_rechts();
+    echo(str("platte3 braucht ", p3_x, " x ", p3_y, " mm Bett"));
+}
+
 if (teil == "alle")             assembly();
 else if (teil == "platte")      druckplatte();
+else if (teil == "platte1")     druckplatte1();
+else if (teil == "platte2")     druckplatte2();
+else if (teil == "platte3")     druckplatte3();
 else if (teil == "boden")       druck_boden();
 else if (teil == "wand_vorn")   druck_wand_vorn();
 else if (teil == "wand_hinten") druck_wand_hinten();

@@ -22,6 +22,9 @@ der einteilige Rahmen 135 mm Bauhoehe.
 | MECB_Gehaeuse_deckel.stl      | Deckel mit Griffoeffnungen               |
 | MECB_Gehaeuse_probe.stl       | Testteil: ein Fuehrungskanal und ein Dom |
 | MECB_Gehaeuse_platte.stl      | alle sieben Druckteile in einem Druck    |
+| MECB_Gehaeuse_platte1.stl     | die beiden Laengswaende, fuer 256 mm     |
+| MECB_Gehaeuse_platte2.stl     | boden, deckel und probe, fuer 256 mm     |
+| MECB_Gehaeuse_platte3.stl     | die beiden Seitenplatten, fuer 256 mm    |
 
 Jedes Druckteil liegt in seiner STL-Datei schon in Drucklage: z = 0 ist
 das Druckbett, x und y sind positiv.
@@ -43,20 +46,34 @@ Bettbedarf: 134.9 mm in einer Achse. Kein Teil braucht
 Stuetzmaterial; alle Anbauteile (Stege, Saeulen, Dome) zeigen in
 Drucklage nach oben.
 
-## Alle Teile in einem Druck (MECB_Gehaeuse_platte.stl)
+## Alle Teile auf einem Druckbett
 
-`MECB_Gehaeuse_platte.stl` enthaelt alle sieben Druckteile, jedes in
-seiner Drucklage, nebeneinander auf dem Bett: links die vordere Wand
-mit Boden und Probe, in der Mitte die hintere Wand mit Deckel, rechts
-die beiden Seitenplatten um 90 Grad gedreht. Abstand zwischen den
-Teilen 5 mm (`platte_abstand` in der scad).
+Fuer ein Bett von 256 x 256 mm (Bambu Lab P2S, Nutzervorgabe
+2026-11-26) liegen die Teile auf DREI Platten. In einen Druck passen
+sie dort nicht: ihre Grundflaechen sind zusammen 82058 mm^2, ein Bett
+hat 65536 mm^2 - das reicht auch bei lueckenlosem Packen nicht, und
+weniger Abstand hilft deshalb nichts.
 
-**Die Platte braucht 335.5 x 274.0 mm Bettflaeche**, hoechstes Teil
-40 mm (die Probe). Das haben nur Grossformat-Drucker - ein 256-mm- oder
-300-mm-Bett reicht NICHT. Die Grundflaeche der sieben Teile ist allein
-82000 mm^2, also mindestens 287 x 287 mm selbst bei lueckenlosem
-Packen; ein kleinerer Abstand hilft deshalb nicht. Auf kleineren
-Druckern bleiben die Einzeldateien - jedes Teil passt auf 135 x 115 mm.
+| Datei                     | Inhalt                       |     x |     y |    z |
+|---------------------------|------------------------------|------:|------:|-----:|
+| MECB_Gehaeuse_platte1.stl | wand_vorn, wand_hinten       | 229.8 | 134.9 | 15.0 |
+| MECB_Gehaeuse_platte2.stl | boden, deckel, probe         | 229.8 | 126.0 | 40.0 |
+| MECB_Gehaeuse_platte3.stl | blende, wand_rechts          | 134.5 | 206.2 |  3.0 |
+| MECB_Gehaeuse_platte.stl  | alle sieben Teile, EIN Druck | 335.5 | 274.0 | 40.0 |
+
+Gruppiert ist nach Form: die beiden Laengswaende, die beiden flachen
+Seitenplatten, dazu Boden und Deckel mit der Probe. Abstand
+zwischen den Teilen 5 mm (`platte_abstand` in der scad). Reihenfolge
+beliebig; `probe` liegt auf platte2 mit - wer sie vorher einzeln
+gedruckt hat (siehe unten), loescht sie im Slicer.
+
+Im Slicer die Platte vom Reinigungsbereich vorn links wegschieben
+(Bambu: etwa 18 x 28 mm). Platz ist dafuer auf jeder Platte: platte1
+und platte2 lassen 26 mm in x frei, platte3 50 mm in y.
+
+`MECB_Gehaeuse_platte.stl` mit allen sieben Teilen bleibt fuer
+Grossformat-Drucker liegen - 335.5 x 274.0 mm, das koennen erst Betten
+ab etwa 350 mm (Ender 5 Plus, Prusa XL).
 
 ## Aufbau und Verschraubung
 
@@ -125,13 +142,13 @@ Problem, weil die Waende zuletzt kommen.
 
 ## Kartenfuehrung - Masse der Passung
 
-| Mass                              | Wert                          |
-|-----------------------------------|-------------------------------|
-| Kanalbreite, Karte 1.6 mm         | 3.0 mm, also 0.7 mm je Seite  |
-| Kanalbreite oben (Einfuehrtrichter) | 4.6 mm                      |
-| Fuehrungstiefe an der Kartenkante | 1.6 mm je Seite               |
-| Luft ueber der Kartenoberkante    | 8.0 mm, mit Deckel 5.0 mm     |
-| Griffoeffnung im Deckel je Slot   | 16 x 34 mm, Griffweg 11 mm    |
+| Mass                                | Wert                         |
+|-------------------------------------|------------------------------|
+| Kanalbreite, Karte 1.6 mm           | 3.0 mm, also 0.7 mm je Seite |
+| Kanalbreite oben (Einfuehrtrichter) | 4.6 mm                       |
+| Fuehrungstiefe an der Kartenkante   | 1.6 mm je Seite              |
+| Luft ueber der Kartenoberkante      | 8.0 mm, mit Deckel 5.0 mm    |
+| Griffoeffnung im Deckel je Slot     | 16 x 34 mm, Griffweg 11 mm   |
 
 Der Einfuehrtrichter sitzt auf den obersten 10 mm der Stege: dort weicht
 der Steg in x um 0.8 mm nach aussen (der Kanal wird breiter) und zieht
@@ -171,7 +188,9 @@ weniger als 1 mm Material stehen geblieben, weil die Steckplaetze alle
 for t in boden wand_vorn wand_hinten blende wand_rechts deckel probe; do
     openscad -o "MECB_Gehaeuse_$t.stl" -D "teil=\"$t\"" MECB_Gehaeuse.scad
 done
-openscad -o MECB_Gehaeuse_platte.stl -D 'teil="platte"' MECB_Gehaeuse.scad
+for t in platte platte1 platte2 platte3; do
+    openscad -o "MECB_Gehaeuse_$t.stl" -D "teil=\"$t\"" MECB_Gehaeuse.scad
+done
 ```
 
 Von der Zusammenbau-Ansicht (`teil="alle"`) wird KEINE STL-Datei

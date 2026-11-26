@@ -360,3 +360,55 @@ STL-Dateien gerechnet):
 
 Nicht geprueft: die Platten im Slicer selbst (kein Bambu Studio auf
 diesem Rechner) - TODO-Punkt 9, jetzt in der Pruefliste.
+
+============================================================
+2026-11-26 09:26
+============================================================
+Recherche: reicht die Wandstaerke fuer ein Gehaeuse? Ergebnis ja, mit
+zwei knappen Unterschreitungen - Einordnung im README, zwei TODO-Punkte.
+
+Prompt: "recherchiere ob die Wandstärke für ein Gehäuse ausreichend ist"
+
+Keine Aenderung an der Geometrie, nur Bewertung und Dokumentation.
+
+Quellen (abgerufen 2026-11-26): Hubs, "How do you design enclosures
+for 3D printing" - Minimum 2 mm Wandstaerke, Material rund um ein
+Schraubloch mindestens ein Lochdurchmesser, Kernloch 0.25 mm unter
+Nenndurchmesser; FacFox Enclosure Design Guide und weitere - ueblicher
+Bereich 2..3 mm, 3.2 mm (vier Perimeter bei 0.4-mm-Duese) fuer
+staendig angefasste Gehaeuse, >= 3 mm an gewindeschneidenden
+Schraubloechern; JC Fasteners "Plastite" Thread Forming Screws
+Technical Guide - Gewindeeingriff 2.0..2.5 x Schraubendurchmesser,
+Kernloch 80..90 % des Nenndurchmessers; Core77, Ribs and Gussets -
+Rippendicke 60..80 % der Wand, Rippenhoehe <= 3 x Wandstaerke.
+
+Dieses Gehaeuse gegen diese Regeln:
+  Wand, Deckel, Seitenplatten  3.0 mm   Minimum 2.0, ueblich 2..3  ok
+  Boden                        5.0 mm                              ok
+  Material um ein Schraubloch  2.65..4.15 mm  Regel 2.7 mm   knapp
+  Gewindeeingriff M3           7..9 mm = 2.33..3.0 x d            ok
+  Kernloch m3_kern             2.7 mm = 90 % von M3               ok
+  Rippenvorschlag aus TODO 6   2 x 3 mm = 67 % der Wand, <= 9 mm  ok
+
+Knapp unterschritten (TODO-Punkt 10): dom_bp_d = 8 mm laesst 2.65 mm
+Material um das 2.7-mm-Kernloch, die Regel will 2.7 mm (0.05 mm mehr,
+dom_bp_d = 8.2 wuerde reichen); deckel_d = 3.0 mm gegen die 3.2 mm fuer
+staendig angefasste Teile. Die Saeulen der Seitenplatten erfuellen die
+Regel: dort fliesst die Wand in die Saeule, um das Loch stehen 3.15 mm
+(duennste Seite) bzw. 5.15 mm.
+
+Gerechnet (Plattenbiegung, D = E t^3 / (12 (1 - nu^2)), nu = 0.35,
+Punktlast 20 N in der Mitte, allseitig gelenkig gelagert, alpha
+= 0.01443 fuer b/a = 1.337 nach Timoshenko): die Seitenplatte 134.5 x
+100.6 x 3.0 mm biegt sich 0.46 mm bei E = 2500 MPa, 0.38 mm bei 3000,
+0.33 mm bei 3500. Die vier Punktauflagen sind weicher als eine
+Linienauflage - real etwa das Zwei- bis Dreifache. 4 statt 3 mm waeren
+2.37-mal so steif (t^3), kosten aber Aussenmass.
+
+Slicer-Einstellung, die daraus folgt: bei 0.4-mm-Duese (0.42 aussen,
+0.45 innen) ergeben drei Perimeter je Seite 2.64 mm, in der Mitte der
+3-mm-Wand bleiben 0.36 mm Fuellung. Mindestens vier Perimeter, dann ist
+die Wand durchgehend massiv. Im README vermerkt.
+
+Nicht geprueft: alles am gedruckten Teil (Verzug der grossen Platten,
+Steifigkeit) - TODO-Punkte 6, 7 und 10.

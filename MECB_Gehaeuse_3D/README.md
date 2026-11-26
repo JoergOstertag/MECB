@@ -122,6 +122,54 @@ Die Seitenplatten waren 2.6 statt 3.0 mm, weil `platte_luft` auch von
 der Dicke abgezogen wurde. Luft braucht eine Platte aber nur in y und
 z; x ist ihre Einschubrichtung, dort setzt sie buendig auf.
 
+### Einordnung nach den gaengigen Konstruktionsregeln
+
+Recherche 2026-11-26 (Quellen am Ende des Abschnitts). Die
+veroeffentlichten Regeln fuer FDM-Gehaeuse nennen 2 mm als Minimum und
+2 bis 3 mm als ueblichen Bereich; 3.2 mm (vier Perimeter bei 0.4-mm-
+Duese) gelten als besser fuer ein Gehaeuse, das man staendig in die
+Hand nimmt. Dieses Gehaeuse liegt damit am oberen Ende des ueblichen
+Bereichs:
+
+| Regel                                   | Vorgabe     | hier           |
+|-----------------------------------------|-------------|----------------|
+| Wandstaerke Gehaeuse, Minimum           | 2.0 mm      | 3.0 mm         |
+| Wandstaerke, ueblicher Bereich          | 2.0..3.0 mm | 3.0 mm         |
+| Wand bei staendiger Handhabung          | 3.2 mm      | 3.0 mm Deckel  |
+| Material rund um ein Schraubloch        | >= 1x Loch  | 2.65..4.15 mm  |
+| Gewindeeingriff selbstschneidend        | 2.0..2.5x d | 2.33..3.0x d   |
+| Kernloch, Anteil am Nenndurchmesser     | 80..90 %    | 90 % (2.7 mm)  |
+| Versteifungsrippe, Dicke                | 60..80 %    | 2 mm von 3 mm  |
+| Versteifungsrippe, Hoehe                | <= 3x Wand  | <= 9 mm        |
+
+Nicht erfuellt ist nur zweierlei, beides knapp: die Dome der
+Backplane-Verschraubung haben 2.65 mm Material um das 2.7-mm-Kernloch
+(die Regel will 2.7 mm, also 0.05 mm mehr - `dom_bp_d` von 8 auf
+8.2 mm wuerde reichen), und der Deckel hat 3.0 statt 3.2 mm. Der
+Deckel wird bei jedem Kartenwechsel abgenommen, traegt aber nichts; er
+hat zusaetzlich einen 3 mm hohen Kragen rundum, der wie ein Flansch
+wirkt.
+
+Die duennste Stelle ist nicht die Wand, sondern die Flaeche: die
+Seitenplatten sind 134.5 x 100.6 mm bei 3.0 mm und nur an vier Punkten
+verschraubt. Als allseitig gelenkig gelagerte Platte gerechnet
+(`D = E t^3 / (12 (1 - nu^2))`, nu = 0.35, Punktlast 20 N in der
+Mitte) biegt sie sich 0.33 mm bei E = 3500 MPa bis 0.46 mm bei
+E = 2500 MPa; die vier Punktauflagen sind weicher als eine
+Linienauflage, real ist also etwa das Zwei- bis Dreifache zu erwarten.
+Fuer einen Deckel ohne Tragfunktion reicht das. 4 statt 3 mm waeren
+2.37-mal so steif (t^3), kosten aber 2 mm Aussenmass je Seite - erst
+nach dem Druck entscheiden (TODO-Punkt 6).
+
+Fuer den Slicer folgt daraus eine Einstellung: bei 0.4-mm-Duese
+ergeben drei Perimeter je Seite 2.64 mm, in der Mitte der 3-mm-Wand
+bleiben also 0.36 mm Fuellung. Mindestens VIER Perimeter einstellen,
+dann ist die Wand durchgehend massiv.
+
+Quellen: Hubs (Enclosure design for 3D printing), FacFox Enclosure
+Design Guide, JC Fasteners "Plastite" Thread Forming Screws Technical
+Guide, Core77 (Ribs and Gussets).
+
 ## Reihenfolge des Zusammenbaus
 
 Die Reihenfolge ist nicht beliebig; sie folgt aus geprueften

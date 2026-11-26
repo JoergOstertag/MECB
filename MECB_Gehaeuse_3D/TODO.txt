@@ -8,6 +8,7 @@ UEBERSICHT
   1. STECKHOEHE 13.5 mm - aus DIN 41612 uebernommen, nicht gemessen
   2. UEBERSTAND_SLOT5 6.0 mm - aus einem Foto geschaetzt, nicht gemessen
   6. Seitenplatten 135 x 101 x 3 mm - Verzug beim Druck nicht bewertet
+ 10. Dome 2.65 statt 2.7 mm, Deckel 3.0 statt 3.2 mm - nach dem Druck
 
 PRUEFLISTE - UEBERSICHT
   Rechner mit Bambu Studio
@@ -39,6 +40,28 @@ PRUEFLISTE - UEBERSICHT
        bewertet - bei Verzug schliesst das Gehaeuse nicht sauber.
        Loesung, falls es auftritt: umlaufender Steg innen (2 x 3 mm)
        oder Dicke auf 4 mm. Erst nach dem Druck entscheiden.
+       Recherche 2026-11-26 (siehe README, "Einordnung nach den
+       gaengigen Konstruktionsregeln"): die Dicke selbst ist nicht das
+       Problem - 3 mm liegt am oberen Ende des ueblichen Bereichs
+       2..3 mm. Gerechnete Durchbiegung der Platte bei 20 N in der
+       Mitte: 0.33..0.46 mm bei Linienauflage, real etwa das Zwei- bis
+       Dreifache, weil sie nur an vier Punkten sitzt. 4 mm waeren
+       2.37-mal so steif. Der geplante Steg 2 x 3 mm passt zur Regel
+       (Rippendicke 60..80 % der Wand, Hoehe <= 3x Wand).
+
+[ ] 10. Zwei knappe Unterschreitungen aus derselben Recherche, beide
+       ohne Befund am Teil - erst nach dem Druck entscheiden:
+       a) dom_bp_d = 8 mm laesst 2.65 mm Material um das 2.7-mm-
+          Kernloch. Die Regel "mindestens ein Lochdurchmesser Material
+          rundum" will 2.7 mm. Loesung: dom_bp_d auf 8.2 mm. Betrifft
+          die sechs Dome, die die Backplane halten (M3x8, geringe
+          Last).
+       b) deckel_d = 3.0 mm gegen 3.2 mm, die fuer staendig
+          angefasste Gehaeuseteile empfohlen werden. Der Deckel wird
+          bei jedem Kartenwechsel abgenommen, traegt aber nichts und
+          hat einen 3 mm hohen Kragen rundum. Loesung, falls er sich
+          im Druck weich anfuehlt: deckel_d auf 4 mm (kostet 1 mm
+          Bauhoehe).
 
 ------------------------------------------------------------
 PRUEFLISTE

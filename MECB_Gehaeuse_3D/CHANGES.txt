@@ -412,3 +412,44 @@ die Wand durchgehend massiv. Im README vermerkt.
 
 Nicht geprueft: alles am gedruckten Teil (Verzug der grossen Platten,
 Steifigkeit) - TODO-Punkte 6, 7 und 10.
+
+============================================================
+2026-11-26 09:33
+============================================================
+Die Druckplatten entfallen wieder: MECB_Gehaeuse_platte.stl und
+platte1..3.stl geloescht, der Plattencode aus der scad heraus.
+
+Prompt: "entferne die MECB_Gehaeuse_platte*.stl wieder, ich denke die
+machen keinen Sinn"
+
+Das Anordnen auf dem Druckbett macht der Slicer besser als eine fest
+eingebaute Anordnung: er kennt das eigene Bett, den Reinigungsbereich
+und die Teile, die man gerade nicht drucken will. Eine vorgelegte
+Platte nimmt ihm diese Freiheit und ist bei jeder Massaenderung neu zu
+erzeugen.
+
+Entfernt: die vier STL-Dateien, die Module druckplatte(),
+druckplatte1..3(), die Lagemasse fp_* und die Auswahlzweige
+teil="platte"/"platte1".."platte3". Der Kopfkommentar der scad sagt
+jetzt, dass es bewusst keine Platten gibt. Damit ist auch der
+Pruefpunkt 9 (Platten in Bambu Studio ansehen) entfallen und aus der
+TODO heraus - es gibt nichts mehr anzusehen.
+
+GEBLIEBEN ist alles andere aus den beiden Platten-Eintraegen von heute:
+die Module druck_<teil>() (die Einzelteile benutzen sie), der Fix der
+z-Lage von blende und wand_rechts (lagen 0.2 mm unter dem Druckbett)
+und das Loeschen der Zusammenbau-Datei MECB_Gehaeuse.stl.
+
+Verifikation (OpenSCAD 2026.07.26): alle acht teil-Werte (alle, boden,
+wand_vorn, wand_hinten, blende, wand_rechts, deckel, probe) rechnen
+ohne Fehler oder Warnung. Die sieben Druckteile neu gerechnet und gegen
+die eingecheckten Dateien verglichen - Huelle und Volumen identisch
+(blende 29683.9, wand_rechts 35423.5, boden 57245.6, deckel 25973.4,
+probe 5294.5, wand_vorn 64000.3, wand_hinten 64110.4 mm^3), bei blende
+und wand_rechts auch die Dreieckszahl. Die eingecheckten STL-Dateien
+bleiben deshalb unveraendert.
+
+README: Abschnitt "Mehrere Teile in einem Druck" an der Stelle des
+Plattenabschnitts - warum es keine Platten gibt, und dass die sieben
+Teile auf ein 256-mm-Bett ohnehin nicht in einen Druck passen (82058
+gegen 65536 mm^2), jedes einzelne aber bequem.

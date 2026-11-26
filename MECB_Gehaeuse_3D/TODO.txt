@@ -11,8 +11,6 @@ UEBERSICHT
  10. Dome 2.65 statt 2.7 mm, Deckel 3.0 statt 3.2 mm - nach dem Druck
 
 PRUEFLISTE - UEBERSICHT
-  Rechner mit Bambu Studio
-  9.  platte1..3 im Slicer gegen das 256-mm-Bett pruefen
   Hardware (eigener MECB-Aufbau)
   1b. Steckhoehe am zusammengesteckten Aufbau nachmessen
   2b. Ueberstand der Winkelbuchse von Slot 5 nachmessen
@@ -66,18 +64,6 @@ PRUEFLISTE - UEBERSICHT
 ------------------------------------------------------------
 PRUEFLISTE
 ------------------------------------------------------------
-
-Rechner mit Bambu Studio
-------------------------------------------------------------
-
-[ ] 9.  MECB_Gehaeuse_platte1.stl bis platte3.stl in Bambu Studio
-        laden und gegen das Bett des P2S pruefen (Nutzervorgabe
-        2026-11-26: "Es soll mit einem Bamboolab-P2s Druckvolumen
-        (256 x 256 x 256 mm) druckbar sein"). Gerechnet passen alle
-        drei (229.8 x 134.9 / 229.8 x 126.0 / 134.5 x 206.2 mm), nur
-        im Slicer nicht nachgesehen. Zu pruefen: keine Kollision mit
-        dem Reinigungsbereich vorn links (ca. 18 x 28 mm) und kein
-        Teil ausserhalb des Druckbereichs.
 
 Hardware (eigener MECB-Aufbau)
 ------------------------------------------------------------

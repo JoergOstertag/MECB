@@ -21,10 +21,6 @@ der einteilige Rahmen 135 mm Bauhoehe.
 | MECB_Gehaeuse_wand_rechts.stl | rechte Seite, Lueftung                   |
 | MECB_Gehaeuse_deckel.stl      | Deckel mit Griffoeffnungen               |
 | MECB_Gehaeuse_probe.stl       | Testteil: ein Fuehrungskanal und ein Dom |
-| MECB_Gehaeuse_platte.stl      | alle sieben Druckteile in einem Druck    |
-| MECB_Gehaeuse_platte1.stl     | die beiden Laengswaende, fuer 256 mm     |
-| MECB_Gehaeuse_platte2.stl     | boden, deckel und probe, fuer 256 mm     |
-| MECB_Gehaeuse_platte3.stl     | die beiden Seitenplatten, fuer 256 mm    |
 
 Jedes Druckteil liegt in seiner STL-Datei schon in Drucklage: z = 0 ist
 das Druckbett, x und y sind positiv.
@@ -46,34 +42,19 @@ Bettbedarf: 134.9 mm in einer Achse. Kein Teil braucht
 Stuetzmaterial; alle Anbauteile (Stege, Saeulen, Dome) zeigen in
 Drucklage nach oben.
 
-## Alle Teile auf einem Druckbett
+## Mehrere Teile in einem Druck
 
-Fuer ein Bett von 256 x 256 mm (Bambu Lab P2S, Nutzervorgabe
-2026-11-26) liegen die Teile auf DREI Platten. In einen Druck passen
-sie dort nicht: ihre Grundflaechen sind zusammen 82058 mm^2, ein Bett
-hat 65536 mm^2 - das reicht auch bei lueckenlosem Packen nicht, und
-weniger Abstand hilft deshalb nichts.
+Fertige Druckplatten mit mehreren Teilen liegen hier bewusst NICHT
+(Nutzerentscheidung 2026-11-26). Das Anordnen auf dem Bett macht der
+Slicer besser: alle gewuenschten STL-Dateien laden und automatisch
+anordnen lassen - der Slicer kennt das eigene Bett, den
+Reinigungsbereich und die Teile, die man gerade NICHT drucken will.
 
-| Datei                     | Inhalt                       |     x |     y |    z |
-|---------------------------|------------------------------|------:|------:|-----:|
-| MECB_Gehaeuse_platte1.stl | wand_vorn, wand_hinten       | 229.8 | 134.9 | 15.0 |
-| MECB_Gehaeuse_platte2.stl | boden, deckel, probe         | 229.8 | 126.0 | 40.0 |
-| MECB_Gehaeuse_platte3.stl | blende, wand_rechts          | 134.5 | 206.2 |  3.0 |
-| MECB_Gehaeuse_platte.stl  | alle sieben Teile, EIN Druck | 335.5 | 274.0 | 40.0 |
-
-Gruppiert ist nach Form: die beiden Laengswaende, die beiden flachen
-Seitenplatten, dazu Boden und Deckel mit der Probe. Abstand
-zwischen den Teilen 5 mm (`platte_abstand` in der scad). Reihenfolge
-beliebig; `probe` liegt auf platte2 mit - wer sie vorher einzeln
-gedruckt hat (siehe unten), loescht sie im Slicer.
-
-Im Slicer die Platte vom Reinigungsbereich vorn links wegschieben
-(Bambu: etwa 18 x 28 mm). Platz ist dafuer auf jeder Platte: platte1
-und platte2 lassen 26 mm in x frei, platte3 50 mm in y.
-
-`MECB_Gehaeuse_platte.stl` mit allen sieben Teilen bleibt fuer
-Grossformat-Drucker liegen - 335.5 x 274.0 mm, das koennen erst Betten
-ab etwa 350 mm (Ender 5 Plus, Prusa XL).
+Auf ein Bett von 256 x 256 mm (Bambu Lab P2S) gehen die sieben Teile
+ohnehin nicht in einem Durchgang: ihre Grundflaechen sind zusammen
+82058 mm^2, das Bett hat 65536 mm^2 - das reicht auch bei lueckenlosem
+Packen nicht. Jedes EINZELNE Teil passt dagegen bequem, das groesste
+braucht 134.9 mm in einer Achse.
 
 ## Aufbau und Verschraubung
 
@@ -236,9 +217,6 @@ weniger als 1 mm Material stehen geblieben, weil die Steckplaetze alle
 for t in boden wand_vorn wand_hinten blende wand_rechts deckel probe; do
     openscad -o "MECB_Gehaeuse_$t.stl" -D "teil=\"$t\"" MECB_Gehaeuse.scad
 done
-for t in platte platte1 platte2 platte3; do
-    openscad -o "MECB_Gehaeuse_$t.stl" -D "teil=\"$t\"" MECB_Gehaeuse.scad
-done
 ```
 
 Von der Zusammenbau-Ansicht (`teil="alle"`) wird KEINE STL-Datei
@@ -247,9 +225,9 @@ neben den Druckteilen war sie eine Einladung, sie zu drucken. Wer sie
 sehen will, oeffnet `MECB_Gehaeuse.scad` und laesst `teil` auf `alle`.
 
 Unter Windows liegt das Programm als
-`C:\Program Files\OpenSCAD\openscad.com` (Konsolenfassung; die
-Nightly-Fassung in `OpenSCAD (Nightly)\`), unter
-Ubuntu als `openscad`. Die Aufrufe laufen unter Cygwin/Git Bash ebenso
+`C:\Program Files\OpenSCAD\openscad.com` (Konsolenfassung; eine
+Nightly-Installation liegt in `OpenSCAD (Nightly)\`), unter Ubuntu
+als `openscad`. Die Aufrufe laufen unter Cygwin/Git Bash ebenso
 wie unter Ubuntu.
 
 ## Verschnitt-Tests

@@ -11,17 +11,17 @@ der einteilige Rahmen 135 mm Bauhoehe.
 
 ## Dateien
 
-| Datei                          | Inhalt                                    |
-|--------------------------------|-------------------------------------------|
-| MECB_Gehaeuse.scad             | Quelle, alle Masse und Parameter           |
-| MECB_Gehaeuse.stl              | Zusammenbau-Ansicht (nicht zum Drucken)    |
-| MECB_Gehaeuse_boden.stl        | Bodenplatte 5 mm, mit Backplane-Domen      |
-| MECB_Gehaeuse_wand_vorn.stl    | Laengswand vorn, mit Kartenfuehrung        |
-| MECB_Gehaeuse_wand_hinten.stl  | Laengswand hinten, mit Kartenfuehrung      |
-| MECB_Gehaeuse_blende.stl       | linke Seite, Fenster fuer das Netzteil     |
-| MECB_Gehaeuse_wand_rechts.stl  | rechte Seite, Lueftung                     |
-| MECB_Gehaeuse_deckel.stl       | Deckel mit Griffoeffnungen                |
-| MECB_Gehaeuse_probe.stl        | Testteil: ein Fuehrungskanal und ein Dom   |
+| Datei                         | Inhalt                                   |
+|-------------------------------|------------------------------------------|
+| MECB_Gehaeuse.scad            | Quelle, alle Masse und Parameter         |
+| MECB_Gehaeuse_boden.stl       | Bodenplatte 5 mm, mit Backplane-Domen    |
+| MECB_Gehaeuse_wand_vorn.stl   | Laengswand vorn, mit Kartenfuehrung      |
+| MECB_Gehaeuse_wand_hinten.stl | Laengswand hinten, mit Kartenfuehrung    |
+| MECB_Gehaeuse_blende.stl      | linke Seite, Fenster fuer das Netzteil   |
+| MECB_Gehaeuse_wand_rechts.stl | rechte Seite, Lueftung                   |
+| MECB_Gehaeuse_deckel.stl      | Deckel mit Griffoeffnungen               |
+| MECB_Gehaeuse_probe.stl       | Testteil: ein Fuehrungskanal und ein Dom |
+| MECB_Gehaeuse_platte.stl      | alle sieben Druckteile in einem Druck    |
 
 Jedes Druckteil liegt in seiner STL-Datei schon in Drucklage: z = 0 ist
 das Druckbett, x und y sind positiv.
@@ -42,6 +42,21 @@ Aussenmass des Gehaeuses: 112.4 x 107.0 x 142.9 mm. Groesster
 Bettbedarf: 134.9 mm in einer Achse. Kein Teil braucht
 Stuetzmaterial; alle Anbauteile (Stege, Saeulen, Dome) zeigen in
 Drucklage nach oben.
+
+## Alle Teile in einem Druck (MECB_Gehaeuse_platte.stl)
+
+`MECB_Gehaeuse_platte.stl` enthaelt alle sieben Druckteile, jedes in
+seiner Drucklage, nebeneinander auf dem Bett: links die vordere Wand
+mit Boden und Probe, in der Mitte die hintere Wand mit Deckel, rechts
+die beiden Seitenplatten um 90 Grad gedreht. Abstand zwischen den
+Teilen 5 mm (`platte_abstand` in der scad).
+
+**Die Platte braucht 335.5 x 274.0 mm Bettflaeche**, hoechstes Teil
+40 mm (die Probe). Das haben nur Grossformat-Drucker - ein 256-mm- oder
+300-mm-Bett reicht NICHT. Die Grundflaeche der sieben Teile ist allein
+82000 mm^2, also mindestens 287 x 287 mm selbst bei lueckenlosem
+Packen; ein kleinerer Abstand hilft deshalb nicht. Auf kleineren
+Druckern bleiben die Einzeldateien - jedes Teil passt auf 135 x 115 mm.
 
 ## Aufbau und Verschraubung
 
@@ -156,12 +171,17 @@ weniger als 1 mm Material stehen geblieben, weil die Steckplaetze alle
 for t in boden wand_vorn wand_hinten blende wand_rechts deckel probe; do
     openscad -o "MECB_Gehaeuse_$t.stl" -D "teil=\"$t\"" MECB_Gehaeuse.scad
 done
-openscad -o MECB_Gehaeuse.stl -D 'teil="alle"' \
-         -D 'zeige_hardware=false' MECB_Gehaeuse.scad  # Zusammenbau
+openscad -o MECB_Gehaeuse_platte.stl -D 'teil="platte"' MECB_Gehaeuse.scad
 ```
 
+Von der Zusammenbau-Ansicht (`teil="alle"`) wird KEINE STL-Datei
+erzeugt. Sie ist nur zum Ansehen in OpenSCAD (F5) gedacht; als Datei
+neben den Druckteilen war sie eine Einladung, sie zu drucken. Wer sie
+sehen will, oeffnet `MECB_Gehaeuse.scad` und laesst `teil` auf `alle`.
+
 Unter Windows liegt das Programm als
-`C:\Program Files\OpenSCAD\openscad.com` (Konsolenfassung), unter
+`C:\Program Files\OpenSCAD\openscad.com` (Konsolenfassung; die
+Nightly-Fassung in `OpenSCAD (Nightly)\`), unter
 Ubuntu als `openscad`. Die Aufrufe laufen unter Cygwin/Git Bash ebenso
 wie unter Ubuntu.
 

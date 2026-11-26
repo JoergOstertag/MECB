@@ -51,8 +51,11 @@
 // =====================================================================
 
 /* [Was erzeugt werden soll] */
-// alle = Zusammenbau-Ansicht, sonst ein Druckteil in Drucklage
-teil = "alle";          // [alle, boden, wand_vorn, wand_hinten, blende, wand_rechts, deckel, probe]
+// alle   = Zusammenbau-Ansicht, NUR zum Ansehen (davon wird keine
+//          STL-Datei erzeugt - eine solche Datei wuerde jemand drucken)
+// platte = alle sieben Druckteile nebeneinander in Drucklage, ein Druck
+// sonst  = ein einzelnes Druckteil in Drucklage
+teil = "alle";          // [alle, platte, boden, wand_vorn, wand_hinten, blende, wand_rechts, deckel, probe]
 // Hardware in der Zusammenbau-Ansicht mitzeichnen
 zeige_hardware = true;
 
@@ -508,20 +511,77 @@ module assembly() {
 // aufliegen und vollstaendig im positiven x/y-Bereich stehen (sonst legen
 // Slicer das Teil unter oder neben das Bett). Die beiden Laengswaende
 // liegen auf ihrer Aussenflaeche, die Seitenplatten auf ihrer Rueckseite.
-if (teil == "alle")        assembly();
-else if (teil == "boden")  translate([-x0, -y0, -z_bo_bot]) boden();
-else if (teil == "wand_vorn")
+// platte_luft gehoert NICHT in die z-Verschiebung der Seitenplatten: es
+// ist die Luft in ihrer Oeffnung, nicht unter ihnen. Mit ihr lagen
+// blende und wand_rechts 0.2 mm UNTER dem Druckbett (z = -0.2 .. 2.8).
+module druck_boden()  { translate([-x0, -y0, -z_bo_bot]) boden(); }
+module druck_wand_vorn() {
     translate([-x0, z_top, -y0]) rotate([90, 0, 0]) wand_vorn();
-else if (teil == "wand_hinten")
+}
+module druck_wand_hinten() {
     translate([-x0, -z_bo_top, y1]) rotate([-90, 0, 0]) wand_hinten();
-else if (teil == "blende")
+}
+module druck_blende() {
     translate([-(z_bo_top + platte_luft), -(yi0 + platte_luft),
-               x0 + wand - platte_luft])
+               x0 + wand])
         rotate([0, 90, 0]) blende();
-else if (teil == "wand_rechts")
+}
+module druck_wand_rechts() {
     translate([z_top - platte_luft, -(yi0 + platte_luft),
-               -(xi1 + platte_luft)])
+               -xi1])
         rotate([0, -90, 0]) wand_rechts();
-else if (teil == "deckel") translate([-x0, y1, z_top + deckel_d])
-                               rotate([180, 0, 0]) deckel();
-else if (teil == "probe")  probe();
+}
+module druck_deckel() {
+    translate([-x0, y1, z_top + deckel_d]) rotate([180, 0, 0]) deckel();
+}
+
+// ------------------------------------------------- Druckplatte (teil=platte)
+// Alle sieben Druckteile in EINEM Modell, jedes in seiner Drucklage,
+// nebeneinander auf dem Bett. Die Grundflaechen stehen hier als Masse,
+// weil OpenSCAD die Huelle eines Teils nicht abfragen kann - sie sind
+// aus denselben Variablen gerechnet wie die Teile selbst, nicht geraten.
+fp_wand_x   = x1 - x0;                             // boden, deckel, Waende
+fp_bd_y     = y1 - y0;                             // boden, deckel
+fp_wand_y   = z_top - z_bo_top;                    // Laengswaende
+fp_platte_x = z_top - z_bo_top - 2 * platte_luft;  // Seitenplatten
+fp_platte_y = yi1 - yi0 - 2 * platte_luft;
+fp_probe_x  = 44;   // aus probe(): Wandstueck 30 + Sockel 14
+fp_probe_y  = 14;
+
+// Drei Spalten: links die vordere Wand mit Boden und Probe, in der Mitte
+// die hintere Wand mit Deckel, rechts die beiden Seitenplatten um 90 Grad
+// gedreht (so wird die Platte schmaler als mit ihrer langen Kante in x).
+platte_abstand = 5;    // Abstand zwischen den Teilen auf dem Bett
+pl_sp2 = fp_wand_x + platte_abstand;        // x-Anfang Spalte 2
+pl_sp3 = 2 * (fp_wand_x + platte_abstand);  // x-Anfang Spalte 3
+pl_re2 = fp_wand_y + platte_abstand;        // y-Anfang Reihe 2, Spalte 1+2
+pl_re3 = pl_re2 + fp_bd_y + platte_abstand; // y-Anfang Reihe 3, Spalte 1
+pl_pl2 = fp_platte_x + platte_abstand;      // y-Anfang Reihe 2, Spalte 3
+platte_x = pl_sp3 + fp_platte_y;
+platte_y = max(pl_re3 + fp_probe_y, pl_pl2 + fp_platte_x);
+
+module druckplatte() {
+    druck_wand_vorn();
+    translate([0, pl_re2, 0]) druck_boden();
+    translate([0, pl_re3, 0]) probe();
+
+    translate([pl_sp2, 0, 0])      druck_wand_hinten();
+    translate([pl_sp2, pl_re2, 0]) druck_deckel();
+
+    translate([pl_sp3 + fp_platte_y, 0, 0])
+        rotate([0, 0, 90]) druck_blende();
+    translate([pl_sp3 + fp_platte_y, pl_pl2, 0])
+        rotate([0, 0, 90]) druck_wand_rechts();
+
+    echo(str("Druckplatte braucht ", platte_x, " x ", platte_y, " mm Bett"));
+}
+
+if (teil == "alle")             assembly();
+else if (teil == "platte")      druckplatte();
+else if (teil == "boden")       druck_boden();
+else if (teil == "wand_vorn")   druck_wand_vorn();
+else if (teil == "wand_hinten") druck_wand_hinten();
+else if (teil == "blende")      druck_blende();
+else if (teil == "wand_rechts") druck_wand_rechts();
+else if (teil == "deckel")      druck_deckel();
+else if (teil == "probe")       probe();

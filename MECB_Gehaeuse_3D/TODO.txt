@@ -8,6 +8,7 @@ UEBERSICHT
   1. STECKHOEHE 13.5 mm - aus DIN 41612 uebernommen, nicht gemessen
   2. UEBERSTAND_SLOT5 6.0 mm - aus einem Foto geschaetzt, nicht gemessen
   6. Seitenplatten 135 x 101 x 3 mm - Verzug beim Druck nicht bewertet
+  9. Druckplatte braucht 335 x 274 mm Bett - Drucker dafuer? (Nutzerfrage)
 
 PRUEFLISTE - UEBERSICHT
   Hardware (eigener MECB-Aufbau)
@@ -37,6 +38,19 @@ PRUEFLISTE - UEBERSICHT
        bewertet - bei Verzug schliesst das Gehaeuse nicht sauber.
        Loesung, falls es auftritt: umlaufender Steg innen (2 x 3 mm)
        oder Dicke auf 4 mm. Erst nach dem Druck entscheiden.
+
+[ ] 9. MECB_Gehaeuse_platte.stl (alle sieben Teile in einem Druck)
+       braucht 335.5 x 274.0 mm Bettflaeche. WARTET AUF NUTZER: steht
+       ein Drucker mit so grossem Bett zur Verfuegung? Ein 256-mm-Bett
+       (Bambu X1/P1) oder 300-mm-Bett (K1 Max) reicht nicht, ein
+       350-mm- (Ender 5 Plus) oder 360-mm-Bett (Prusa XL) reicht.
+       Ein kleinerer Abstand hilft nicht: die Grundflaechen der sieben
+       Teile sind zusammen 82058 mm^2, also mindestens 287 x 287 mm
+       selbst bei lueckenlosem Packen.
+       Loesung bei kleinerem Bett: entweder bei den Einzeldateien
+       bleiben (jede passt auf 135 x 115 mm) oder zwei bis drei
+       kleinere Platten vorsehen (Waende zusammen, Boden und Deckel
+       zusammen, Seitenplatten zusammen - je etwa 230 x 135 mm).
 
 ------------------------------------------------------------
 PRUEFLISTE

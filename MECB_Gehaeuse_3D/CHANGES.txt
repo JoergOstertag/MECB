@@ -263,3 +263,62 @@ mit den Waenden), Renderzeit 11:04.
 
 Nicht geprueft: der Druck selbst. Ob 3 mm Platte und 5 mm Boden im
 Betrieb halten, zeigt erst das gedruckte Teil (TODO-Punkt 7).
+
+============================================================
+2026-11-26 09:12
+============================================================
+MECB_Gehaeuse.stl (Zusammenbau) entfaellt; neu MECB_Gehaeuse_platte.stl
+mit allen sieben Druckteilen auf einem Bett.
+
+Prompt: "MECB_Gehaeuse.stl bitte nicht mehr erzeugen. Sonst versucht
+jemand das zu drucken" / "Erstelle zusätzlich ein stl in dem alle
+einzelteile drin sind und richtig plaziert sind so daß man das mit
+einem Druck ausdrucken kannn"
+
+MECB_Gehaeuse.stl war die Zusammenbau-Ansicht - ein Gehaeuse mit
+senkrecht stehenden Waenden, 142.9 mm hoch und innen hohl. Als Datei
+neben den Druckteilen war sie eine Einladung, sie in den Slicer zu
+ziehen. Die Datei ist geloescht, der Export aus dem README heraus; die
+Ansicht selbst bleibt (teil="alle", nur fuer F5 in OpenSCAD).
+
+NEU teil="platte" -> MECB_Gehaeuse_platte.stl: alle sieben Druckteile,
+jedes in seiner Drucklage, nebeneinander auf dem Bett. Drei Spalten -
+links wand_vorn, boden, probe; Mitte wand_hinten, deckel; rechts
+blende und wand_rechts um 90 Grad um z gedreht (quer sind sie 34 mm
+schmaler). Abstand 5 mm (platte_abstand).
+
+Die Ausgabe-Sektion der scad liegt jetzt in Modulen druck_<teil>(),
+damit die Druckplatte dieselben Lagen benutzt wie die Einzeldateien
+und nicht eine zweite Fassung davon.
+
+FEHLER DABEI GEFUNDEN UND BEHOBEN: blende und wand_rechts lagen in
+Drucklage 0.2 mm UNTER dem Druckbett (z = -0.200 .. 2.800 statt
+0 .. 3.000). In der z-Verschiebung stand platte_luft (0.2 mm) - das
+ist die Luft der Platte in ihrer Oeffnung, nicht unter ihr. Ein Slicer
+meldet so ein Teil als "unter dem Bett" oder schiebt es still hoch.
+Beide STL-Dateien neu erzeugt.
+
+Verifikation (OpenSCAD 2026.07.26, Masse aus den erzeugten STL-Dateien
+gerechnet, nicht aus dem Modell abgelesen):
+  platte          28374 Dreiecke, x 0..335.466, y 0..274.044,
+                  z 0..40.010, Volumen 281731.6 mm^3
+  Summe der sieben Einzeldateien                    281731.5 mm^3
+  => Differenz 0.1 mm^3 (Rundung): kein Teil durchdringt ein anderes,
+     eine Ueberlappung wuerde das Volumen der Vereinigung verkleinern
+  blende          x 0..134.522, y 0..100.622, z 0..3.000 (vorher
+                  z -0.200..2.800)
+  wand_rechts     x 0..134.522, y 0..100.622, z 0..3.000 (dito)
+  boden, deckel, probe, wand_vorn, wand_hinten nach der Umstellung auf
+  druck_<teil>() neu erzeugt und gegen die eingecheckten Dateien
+  verglichen: Huelle und Volumen gleich, nur die Dreiecksaufteilung
+  weicht ab (bekannt, siehe
+  Nachtrag im Eintrag vom 2026-11-22 16:26) - die
+  eingecheckten Dateien bleiben deshalb unveraendert.
+
+Die Platte braucht 335.5 x 274.0 mm Bettflaeche. Das ist kein Mangel
+der Anordnung: die Grundflaechen der sieben Teile ergeben 82058 mm^2,
+also mindestens 287 x 287 mm selbst bei lueckenlosem Packen. Ob ein
+Drucker mit so grossem Bett zur Verfuegung steht, ist offen (TODO-Punkt
+9).
+
+Nicht geprueft: der Druck selbst.

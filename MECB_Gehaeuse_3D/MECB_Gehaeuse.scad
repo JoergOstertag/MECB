@@ -26,18 +26,24 @@
 //
 //  Teile:  boden + wand_vorn + wand_hinten + blende + wand_rechts
 //          + deckel   (+ probe zum Vorabtest)
-//  Schrauben, alle selbstschneidend in den Kunststoff:
-//    6x M3x8   Backplane auf die Dome des Bodens
-//    4x M3x12  Boden an die Laengswaende, Kopf in der Senkung
-//    4x M3x12  Deckel an die Laengswaende, Kopf liegt oben auf
-//    4x M3x10  blende, 4x M3x10 wand_rechts, Kopf liegt aussen auf.
+//  Schrauben, alle selbstschneidend in den Kunststoff. Alle Schrauben
+//  des Gehaeuses sind SENKKOPFSCHRAUBEN (90 Grad, DIN 965 / ISO 7046
+//  oder DIN 7991) und verschwinden in einer Senkung (Nutzer
+//  2026-11-27). Die Laenge einer Senkkopfschraube zaehlt MIT Kopf.
+//    6x M3x8   Backplane auf die Dome des Bodens (Kopf beliebig)
+//    4x M3x10  Laengswaende an die Sockel des Bodens, waagrecht von
+//              vorn und hinten durch die Wand
+//    4x M3x12  Deckel an die Laengswaende, von oben
+//    4x M3x10  blende, 4x M3x10 wand_rechts, von der Seite.
 //              M3x12 waere hier 1 mm zu lang: 3 mm Platte plus 9 mm
 //              Gewinde gegen eine nur 8 mm tiefe Bohrung in der Saeule.
 //
 //  MINDESTDICKEN (Nutzerauftrag 2026-11-22, damit nichts ausbricht):
-//  Waende, Deckel und Seitenplatten 3 mm; der Boden 5 mm, weil nur er
-//  eine Kopfsenkung hat und unter ihr min_rest = 2 mm stehen bleiben
-//  muessen. Deckel und Seitenplatten haben deshalb keine Senkung mehr.
+//  Waende, Deckel und Seitenplatten 3 mm, der Boden 5 mm. Die Senkung
+//  ist ein 90-Grad-Kegel, 1.5 mm tief; darunter bleiben in 3 mm Platte
+//  1.5 mm zylindrisches Loch. Anders als bei der frueheren flachen
+//  Zylinderkopfsenkung liegt der Kopf auf der ganzen Kegelflaeche auf,
+//  nicht auf einem duennen Boden unter der Senkung.
 //  Die Wandung um ein selbstschneidendes M3-Gewinde ist mindestens
 //  2.65 mm (Backplane-Dome 8 mm aussen, Saeulen 8 mm tief).
 //
@@ -46,7 +52,12 @@
 //       zuerst geschehen: zwei der sechs Schrauben liegen danach unter
 //       den Saeulen der Laengswaende.
 //    2. Karten einstecken, solange noch keine Wand steht.
-//    3. wand_vorn und wand_hinten aufsetzen und am Boden verschrauben.
+//    3. wand_vorn und wand_hinten von oben aufsetzen und waagrecht
+//       von aussen an die Sockel des Bodens schrauben. Die Waende
+//       tragen unterhalb der Backplane NICHTS nach innen - sonst
+//       stiessen sie beim Aufsetzen an die schon montierte Backplane
+//       (so war es bis 2026-11-27: Gewindedome der Waende 7.4 mm
+//       unter der Backplane-Kante, Nutzerbefund am gedruckten Teil).
 //    4. blende und wand_rechts anschrauben, Deckel zuletzt.
 // =====================================================================
 
@@ -83,13 +94,11 @@ UEBERSTAND_SLOT5 = 6.0;
 wand        = 3.0;      // Wandstaerke
 luft        = 0.6;      // Luft um die Backplane (vorn, hinten, links)
 dom_h       = 12.0;     // Hoehe der Abstandsdome unter der Backplane
-// Der Boden ist dicker als die uebrigen Platten, weil nur in ihm eine
-// Kopfsenkung sitzt: das Gehaeuse soll flach stehen, ohne Fuesse. Unter
-// der Senkung muessen min_rest Millimeter stehen bleiben, sonst reisst
-// die selbstschneidende M3 den Boden an der Schraube aus (gemessen am
-// alten Stand: 0.81 mm Restmaterial im Boden, 0.41 mm in den
-// Seitenplatten). Deckel und Seitenplatten haben KEINE Senkung mehr -
-// dort tragen die vollen 3 mm, die Zylinderkoepfe liegen auf.
+// Der Boden ist 5 mm dick: er traegt die Backplane-Dome und die
+// Sockel, an die die Laengswaende geschraubt werden. (Bis 2026-11-27
+// sass in ihm eine 3 mm tiefe Zylinderkopfsenkung; die gibt es nicht
+// mehr, die Dicke ist geblieben, damit schon gedruckte Teile und die
+// Bauhoehe gleich bleiben.)
 boden_d     = 5.0;
 deckel_d    = 3.0;
 kopffrei    = 8.0;      // Luft ueber der Kartenoberkante (Griffe, Stecker)
@@ -110,8 +119,10 @@ trichter_x  = 0.8;
 /* [Schrauben und Oeffnungen] */
 m3_kern     = 2.7;      // Kernloch, M3 schneidet sich selbst ein
 m3_frei     = 3.4;
-m3_kopf     = 6.4;      // Senkung fuer Zylinderkopf (nur im Boden)
-min_rest    = 2.0;      // Mindestmaterial unter einer Kopfsenkung
+// Senkung fuer M3-Senkkopf, 90 Grad: oben m3_senk Durchmesser, Tiefe
+// (m3_senk - m3_frei)/2 = 1.5 mm. Ein DIN-965-Kopf (5.5 mm) liegt damit
+// 0.45 mm unter der Oberflaeche, ein DIN-7991-Kopf (6.0 mm) 0.2 mm.
+m3_senk     = 6.4;
 platte_luft = 0.2;      // Luft der Seitenplatten in y und z (nicht in x)
 blende_fenster_y = [4, 96];   // Fenster Netzteilseite, y von..bis
 blende_fenster_z = [0, 22];   // ... z von..bis (USB-C, Hohlbuchse, Schalter)
@@ -145,29 +156,40 @@ z_karte_o = STECKHOEHE + KARTE_H;
 steg_oben = z_top - 4;              // Platz fuer den Deckelkragen
 kragen    = 3;                      // Deckelkragen, taucht in den Rahmen
 
-// Schraubpunkte Boden -> Laengswaende: liegen zwischen den Steckerreihen
-// und neben den Backplane-Domen (gegen die Bohrdatei der Backplane
-// geprueft). dom_boden_d ist der Aussendurchmesser dieser Dome; der
-// Positionierrand des Bodens wird an diesen Stellen ausgespart.
-BODEN_SCHRAUBE = [[30, yi0 + 3], [70, yi0 + 3],
-                  [30, yi1 - 3], [70, yi1 - 3]];
-dom_boden_d = 10;
-// Schraubpunkte Deckel -> Laengswaende. In x NICHT in die Ecke, sondern
-// 3.5 mm (links) bzw. 6 mm (rechts) vom Innenmass weg: der Dom hat
-// 11 mm Durchmesser und darf nicht in die Oeffnung einer Seitenplatte
-// ragen. Links darf er naeher heran, dort ist die Wand ohnehin
-// aufgeschnitten.
-DECKEL_SCHRAUBE = [[xi0 + 3.5, yi0 + 3.5], [xi1 - 6, yi0 + 3.5],
-                   [xi1 - 6, yi1 - 3.5], [xi0 + 3.5, yi1 - 3.5]];
-dom_deckel_d = 11;
+// Verschraubung Boden <-> Laengswaende: SOCKEL AUF DEM BODEN, die
+// Schraube geht WAAGRECHT von aussen durch die Wand in den Sockel.
+// Der Sockel steht unter der Backplane-Kante; das ist zulaessig, weil
+// der Boden VOR der Backplane da ist. Die Wand kommt danach von oben
+// und gleitet mit ihrer Innenflaeche am Sockel vorbei.
+// x-Lage zwischen den Steckerreihen und neben den Backplane-Domen
+// (gegen die Bohrdatei der Backplane geprueft, wie die frueheren Dome).
+BODEN_SCHRAUBE_X = [30, 70];
+sockel_b    = 10;       // Breite in x
+sockel_t    = 8;        // Tiefe in y ab Wandinnenseite (Gewinde 8 mm)
+sockel_h    = 9;        // Hoehe; Oberkante 3 mm unter der Backplane
+z_boden_schraube = -(PCB_DICKE + dom_h) + sockel_h / 2;  // Lochmitte
+// Schraubpunkte Deckel -> Laengswaende. Symmetrisch zur Gehaeusemitte
+// (Nutzer 2026-11-27: der Deckel soll in beiden Lagen passen) - je
+// 5.5 mm vom Innenmass, also 8.5 mm von der Aussenkante. Der Dom hat
+// 10 mm Durchmesser; so ragt er rechts nicht in die Oeffnung der
+// Seitenplatte (0.5 mm Luft) und links nicht in den Luftschlitz bei
+// x = 12 (0.35 mm Luft). Der Innenraum selbst ist NICHT symmetrisch:
+// rechts liegen UEBERSTAND_SLOT5 = 6 mm mehr fuer die Winkelbuchse.
+DECKEL_SCHRAUBE = [[xi0 + 5.5, yi0 + 3.5], [xi1 - 5.5, yi0 + 3.5],
+                   [xi1 - 5.5, yi1 - 3.5], [xi0 + 5.5, yi1 - 3.5]];
+dom_deckel_d = 10;
 // Schraubpunkte Seitenplatte -> Laengswand (y, z); die Gewinde sitzen in
 // den Saeulen an den Enden der beiden Fuehrungswaende. Gleiche Lage
 // links (blende) und rechts (wand_rechts).
-PLATTE_SCHRAUBE = [[yi0 + 3.5, 20], [yi1 - 3.5, 20],
-                   [yi0 + 3.5, 95], [yi1 - 3.5, 95]];
+// y = 4.5 mm vom Innenmass: die Kegelsenkung (6.4 mm) endet so 1.1 mm
+// vor der Plattenkante (bei 3.5 mm waeren es 0.1 mm gewesen).
+// z = 28 statt 20: bei z = 20 schnitt das Loch der Blende in das
+// Netzteilfenster (z 0..22, y ab 4) - mit Senkung noch mehr.
+PLATTE_SCHRAUBE = [[yi0 + 4.5, 28], [yi1 - 4.5, 28],
+                   [yi0 + 4.5, 95], [yi1 - 4.5, 95]];
 dom_bp_d  = 8;          // Abstandsdome der Backplane, aussen
 saeule_x  = 9;          // Laenge der Saeulen in x
-saeule_y  = 8;          // Tiefe der Saeulen in y (Wandung ums Gewinde)
+saeule_y  = 9;          // Tiefe der Saeulen in y (Wandung ums Gewinde)
 // Luftschlitze in den Fuehrungswaenden (x-Mitten zwischen den Kanaelen)
 LUEFT_X = [12, 29.6, 49.9, 70.2, 92];
 LUEFT_Y = [12 : 15 : 95];
@@ -183,7 +205,8 @@ GRIFF_LUEFT_Y   = [BP/2 - griff_y/2 - 2.5 - griff_lueft_l/2,
                    BP/2 + griff_y/2 + 2.5 + griff_lueft_l/2];
 
 // Teilungsebene der Laengswaende: so weit reicht das tiefste Anbauteil
-// einer Wand nach innen (Deckeldom: 3.5 + 11/2 = 9 mm). 12 mm laesst
+// einer Wand nach innen (Saeule 9.8 mm, Deckeldom 3.5 + 10/2 = 8.5 mm).
+// 12 mm laesst
 // Luft und schneidet durch kein Bauteil.
 wand_tief = 12;
 
@@ -254,6 +277,14 @@ module fuehrungen() {
     }
 }
 
+// Senkung fuer eine M3-Senkkopfschraube, Achse z, Oberflaeche bei z = 0,
+// Kegel nach -z. Die Durchgangsbohrung selbst zeichnet der Aufrufer.
+module senkung() {
+    t = (m3_senk - m3_frei) / 2;
+    translate([0, 0, -t]) cylinder(d1 = m3_frei, d2 = m3_senk, h = t);
+    cylinder(d = m3_senk, h = 1);
+}
+
 // ------------------------------------------------------------------ Dome
 module dom(x, y, z_unten, hoehe, d_aussen, d_loch, loch_tief) {
     translate([x, y, z_unten]) difference() {
@@ -281,25 +312,27 @@ module boden() {
     difference() {
         union() {
             translate([0, 0, z_bo_bot]) linear_extrude(boden_d) p_aussen();
-            // Positionierrand innen (fuehrt die Waende). An den
-            // Gewindedomen der Laengswaende ausgespart - ohne diese
-            // Aussparung setzt der Rahmen 3 mm zu hoch auf (gemessener
-            // Materialkonflikt von 206 mm3).
-            translate([0, 0, z_bo_top]) linear_extrude(3) difference() {
+            // Positionierrand innen (fuehrt die Waende)
+            translate([0, 0, z_bo_top]) linear_extrude(3)
                 difference() { p_innen(); offset(r = -2) p_innen(); }
-                for (p = BODEN_SCHRAUBE)
-                    translate(p) circle(d = dom_boden_d + 0.8);
+            // Sockel fuer die waagrechten Schrauben der Laengswaende,
+            // buendig mit der Aussenkante des Positionierrands
+            for (x = BODEN_SCHRAUBE_X) {
+                translate([x - sockel_b/2, yi0, z_bo_top - 0.01])
+                    cube([sockel_b, sockel_t, sockel_h + 0.01]);
+                translate([x - sockel_b/2, yi1 - sockel_t, z_bo_top - 0.01])
+                    cube([sockel_b, sockel_t, sockel_h + 0.01]);
             }
             // Abstandsdome fuer die Backplane (M3 schneidet sich ein)
             for (x = BP_LOCH_X) for (y = BP_LOCH_Y)
                 dom(x, y, z_bo_top, dom_h, dom_bp_d, m3_kern, 10);
         }
-        // Durchgangsloecher Boden -> Laengswand, Senkung von unten
-        for (p = BODEN_SCHRAUBE) {
-            translate([p[0], p[1], z_bo_bot - 1])
-                cylinder(d = m3_frei, h = boden_d + 2);
-            translate([p[0], p[1], z_bo_bot - 0.01])
-                cylinder(d = m3_kopf, h = boden_d - min_rest);
+        // Kernloecher in den Sockeln, waagrecht in y, durchgehend
+        for (x = BODEN_SCHRAUBE_X) {
+            translate([x, yi0 - 1, z_boden_schraube]) rotate([-90, 0, 0])
+                cylinder(d = m3_kern, h = sockel_t + 2);
+            translate([x, yi1 + 1, z_boden_schraube]) rotate([90, 0, 0])
+                cylinder(d = m3_kern, h = sockel_t + 2);
         }
         // Luftschlitze
         translate([0, 0, z_bo_bot - 1]) linear_extrude(boden_d + 2)
@@ -323,12 +356,22 @@ module rahmen_voll() {
             saeule(xi0, yi1, -1);                 // links hinten
             saeule(xi1 - saeule_x, yi0, +1);      // rechts vorn
             saeule(xi1 - saeule_x, yi1, -1);      // rechts hinten
-            // Gewindedome fuer den Deckel (ragen 2 mm in die Waende)
+            // Gewindedome fuer den Deckel (ragen 1.5 mm in die Waende)
             for (p = DECKEL_SCHRAUBE)
                 dom(p[0], p[1], z_top - 14, 14, dom_deckel_d, m3_kern, 11);
-            // Gewindedome fuer die Bodenplatte
-            for (p = BODEN_SCHRAUBE)
-                dom(p[0], p[1], z_bo_top, 9, dom_boden_d, m3_kern, 8);
+        }
+        // Durchgangsloecher zu den Sockeln des Bodens, Senkung aussen
+        for (x = BODEN_SCHRAUBE_X) {
+            translate([x, y0, z_boden_schraube]) rotate([90, 0, 0]) {
+                translate([0, 0, -wand - 1])
+                    cylinder(d = m3_frei, h = wand + 2);
+                senkung();
+            }
+            translate([x, y1, z_boden_schraube]) rotate([-90, 0, 0]) {
+                translate([0, 0, -wand - 1])
+                    cylinder(d = m3_frei, h = wand + 2);
+                senkung();
+            }
         }
         // Oeffnung links (blende) und rechts (wand_rechts): die Wand
         // zwischen den Fuehrungswaenden heraus
@@ -377,10 +420,7 @@ module seitenplatte(seite) {
     // Einschubrichtung, dort setzt sie einfach auf. Vorher wurde
     // platte_luft auch von der DICKE abgezogen, die Platte war also nur
     // 2.6 statt 3.0 mm stark.
-    // Keine Kopfsenkung: unter einer 2.2 mm tiefen Senkung blieben in
-    // 2.6 mm Platte 0.41 mm stehen (gemessen) - daran reisst eine
-    // selbstschneidende M3 aus. Die Zylinderkoepfe liegen jetzt aussen
-    // auf, dafuer tragen die vollen 3 mm.
+    // Kegelsenkung fuer Senkkopfschrauben aussen (Nutzer 2026-11-27).
     xa = seite < 0 ? x0 : xi1;                   // Innenkante in x
     difference() {
         translate([xa, yi0 + platte_luft, z_bo_top + platte_luft])
@@ -392,10 +432,14 @@ module seitenplatte(seite) {
             fenster_x(blende_fenster_z[0], blende_fenster_z[1],
                       blende_fenster_y[0], blende_fenster_y[1], 2,
                       xa - 1, wand + 2);
-        // Durchgangsloecher, ohne Senkung
-        for (p = PLATTE_SCHRAUBE)
+        // Durchgangsloecher mit Senkung auf der Aussenseite
+        xo = seite < 0 ? x0 : x1;                // Aussenflaeche
+        for (p = PLATTE_SCHRAUBE) {
             translate([xa - 1, p[0], p[1]]) rotate([0, 90, 0])
                 cylinder(d = m3_frei, h = wand + 2);
+            translate([xo, p[0], p[1]])
+                rotate([0, seite < 0 ? -90 : 90, 0]) senkung();
+        }
         // Luftschlitze: links oberhalb des Fensters, rechts ueber die
         // ganze Hoehe
         for (y = LUEFT_Y)
@@ -426,12 +470,12 @@ module deckel() {
                         cylinder(d = dom_deckel_d + 2, h = kragen + 2);
             }
         }
-        // Durchgangsloecher ohne Kopfsenkung: die vollen deckel_d
-        // tragen, die Zylinderkoepfe liegen oben auf. Mit Senkung
-        // blieben darunter nur 0.81 mm stehen (gemessen).
-        for (p = DECKEL_SCHRAUBE)
+        // Durchgangsloecher mit Kegelsenkung oben (Senkkopf)
+        for (p = DECKEL_SCHRAUBE) {
             translate([p[0], p[1], z_top - 1])
                 cylinder(d = m3_frei, h = deckel_d + 2);
+            translate([p[0], p[1], z_top + deckel_d]) senkung();
+        }
         if (deckel_art == "luft")
             translate([0, 0, z_top - kragen - 1])
                 linear_extrude(deckel_d + kragen + 2) {

@@ -17,6 +17,7 @@ PRUEFLISTE - UEBERSICHT
   3.  Testteil "probe" drucken: Kanal, Einfuehrtrichter, M3-Gewinde
   7.  Steifigkeit der vierteiligen Verbindung am gedruckten Teil pruefen
   8.  Steckkontaktlaenge DIN 41612 messen - reichen 8 mm Hub?
+  11. Stand 2026-11-27 drucken: Waende ueber Backplane, Sockel, Senkungen
 
 ------------------------------------------------------------
 
@@ -86,8 +87,9 @@ Hardware (eigener MECB-Aufbau)
         Seitenplatten steif genug stehen, zeigt erst das gedruckte
         Teil. Zu pruefen: wackelt eine Wand, wenn das Gehaeuse auf der
         Seite liegt; sitzen die Stosskanten an den Ecken spaltfrei.
-        Falls nicht: zweites Schraubenpaar Boden -> Laengswand bei
-        x = 100, oder Nut/Feder an den Eckstoessen.
+        Falls nicht: drittes Paar Bodensockel bei x = 100 (waagrecht
+        verschraubt wie die bei x = 30/70), oder Nut/Feder an den
+        Eckstoessen.
 
 [ ] 8.  Hub bei aufgesetztem Deckel. Die Griffoeffnungen im Deckel
         (16 x 34 mm je Steckplatz, Nutzerentscheidung 2026-11-22) geben
@@ -99,3 +101,17 @@ Hardware (eigener MECB-Aufbau)
         Kartenwechsel den Deckel abzunehmen (vier Schrauben) - oder
         kopffrei wird auf den gemessenen Wert plus Reserve erhoeht
         (kostet dieselbe Hoehe am Gehaeuse).
+
+[ ] 11. Teile des Stands 2026-11-27 drucken und am Aufbau pruefen.
+        Geaendert und neu zu drucken: boden (Sockel statt Senkloecher),
+        wand_vorn und wand_hinten (keine Dome mehr, waagrechte
+        Senkloecher), deckel (symmetrische Loecher, Senkungen); blende
+        und wand_rechts erstmals (Senkungen, Schrauben auf 4.5 mm und
+        z = 28). Zu pruefen:
+        a) lassen sich die Waende ueber der montierten Backplane mit
+           eingesteckten Karten von oben aufsetzen (gerechnet 0 mm3
+           Konflikt, der alte Stand hatte 2018 mm3)?
+        b) zieht eine M3x10-Senkkopfschraube waagrecht im Sockel
+           (Kernloch 2.7 mm, im Druck liegend - Loch evtl. oval)?
+        c) liegen die Senkkoepfe buendig (Kegel 6.4 mm oben, 90 Grad)?
+        d) passt der Deckel in beiden Lagen?

@@ -14,7 +14,7 @@ der einteilige Rahmen 135 mm Bauhoehe.
 | Datei                         | Inhalt                                   |
 |-------------------------------|------------------------------------------|
 | MECB_Gehaeuse.scad            | Quelle, alle Masse und Parameter         |
-| MECB_Gehaeuse_boden.stl       | Bodenplatte 5 mm, mit Backplane-Domen    |
+| MECB_Gehaeuse_boden.stl       | Bodenplatte 5 mm, Backplane-Dome, Sockel |
 | MECB_Gehaeuse_wand_vorn.stl   | Laengswand vorn, mit Kartenfuehrung      |
 | MECB_Gehaeuse_wand_hinten.stl | Laengswand hinten, mit Kartenfuehrung    |
 | MECB_Gehaeuse_blende.stl      | linke Seite, Fenster fuer das Netzteil   |
@@ -58,19 +58,35 @@ braucht 134.9 mm in einer Achse.
 
 ## Aufbau und Verschraubung
 
-Die beiden Laengswaende tragen alle Gewinde. Boden und Deckel klammern
-sie von unten und oben, die beiden Seitenplatten ziehen sie zusammen.
+Die Laengswaende tragen die Gewinde fuer Deckel und Seitenplatten; der
+Boden traegt vier Sockel, an die die Laengswaende WAAGRECHT von aussen
+geschraubt werden. Die Waende haben unterhalb der Backplane nichts, was
+nach innen ragt - sonst stiessen sie beim Aufsetzen an die schon
+montierte Backplane (so war es bis 2026-11-27, siehe CHANGES.txt).
 
-| Verbindung                | Schrauben | Kopf                      |
-|---------------------------|-----------|---------------------------|
-| Backplane -> Boden        | 6x M3x8   | auf der Backplane         |
-| Laengswand -> Boden       | 4x M3x12  | in der Senkung des Bodens |
-| Deckel -> Laengswand      | 4x M3x12  | liegt oben auf            |
-| blende -> Laengswand      | 4x M3x10  | liegt aussen auf          |
-| wand_rechts -> Laengswand | 4x M3x10  | liegt aussen auf          |
+Alle Gehaeuseschrauben sind SENKKOPFSCHRAUBEN (90 Grad, DIN 965 /
+ISO 7046 oder DIN 7991) und verschwinden in einer Kegelsenkung. Bei
+Senkkopfschrauben zaehlt die Laenge MIT dem Kopf.
+
+| Verbindung                | Schrauben          | Richtung                |
+|---------------------------|--------------------|-------------------------|
+| Backplane -> Boden        | 6x M3x8            | von oben, Kopf beliebig |
+| Laengswand -> Boden       | 4x M3x10 Senkkopf  | waagrecht, vorn/hinten  |
+| Deckel -> Laengswand      | 4x M3x12 Senkkopf  | von oben                |
+| blende -> Laengswand      | 4x M3x10 Senkkopf  | von links               |
+| wand_rechts -> Laengswand | 4x M3x10 Senkkopf  | von rechts              |
 
 Die Seitenplatten brauchen M3x10, nicht M3x12: 3 mm Platte plus 9 mm
 Gewinde waeren 1 mm mehr, als die Bohrung in der Saeule tief ist (8 mm).
+Die Bodensockel sind 8 mm tief, eine M3x10 greift dort 7 mm.
+
+Die Schraubloecher des Deckels liegen symmetrisch zur Gehaeusemitte
+(8.5 mm von der linken und rechten, 6.5 mm von der vorderen und hinteren
+Aussenkante): der Deckel passt auch um 180 Grad gedreht. Der Innenraum
+ist dagegen NICHT symmetrisch - rechts liegen 6 mm mehr fuer die
+Winkelbuchse von Slot 5 (`UEBERSTAND_SLOT5`). Gedreht sitzen die
+Griffoeffnungen deshalb 5.4 mm neben der Kartenmitte; bei 16 mm breiten
+Oeffnungen liegt die Karte trotzdem darunter.
 
 Alle Schrauben schneiden sich selbst in den Kunststoff (Kernloch
 2.7 mm).
@@ -82,22 +98,29 @@ duennstes Mass hin geprueft. Die kritische Groesse ist nicht die Wand,
 sondern das Material, das einen Schraubenkopf haelt - gemessen an der
 Geometrie, nicht aus den Parametern gerechnet:
 
-| Stelle                            | vorher  | jetzt   |
-|-----------------------------------|--------:|--------:|
-| Wand, Deckel                      | 3.00 mm | 3.00 mm |
-| Seitenplatten (blende, rechts)    | 2.60 mm | 3.00 mm |
-| Boden                             | 3.00 mm | 5.00 mm |
-| Material unter Kopfsenkung, Boden | 0.81 mm | 2.01 mm |
-| Material am Schraubloch, Deckel   | 0.81 mm | 3.00 mm |
-| Material am Schraubloch, Platten  | 0.41 mm | 3.00 mm |
-| Wandung um ein M3-Gewinde, Dome   | 2.15 mm | 2.65 mm |
-| Wandung um ein M3-Gewinde, Saeule | 2.15 mm | 3.15 mm |
+| Stelle                                 |    Mass |
+|----------------------------------------|--------:|
+| Wand, Deckel, Seitenplatten            | 3.00 mm |
+| Boden                                  | 5.00 mm |
+| Kegelsenkung, Tiefe                    | 1.50 mm |
+| zylindrisches Loch unter der Senkung   | 1.50 mm |
+| Material Senkung -> Plattenkante       | >= 1 mm |
+| Wandung um ein M3-Gewinde, Dome        | 2.65 mm |
+| Wandung um ein M3-Gewinde, Saeule      | 3.15 mm |
+| Wandung um ein M3-Gewinde, Bodensockel | 3.15 mm |
 
-Die Senkung sitzt nur noch **im Boden** - dort muss sie sein, damit das
-Gehaeuse ohne Fuesse flach steht; deshalb ist der Boden 5 mm dick, so
-dass unter der 3 mm tiefen Senkung noch `min_rest` = 2 mm stehen. In
-Deckel und Seitenplatten gibt es keine Senkung mehr, dort tragen die
-vollen 3 mm und die Zylinderkoepfe liegen auf.
+Die Senkung ist ein 90-Grad-Kegel (oben 6.4 mm, unten 3.4 mm). Ein
+Senkkopf liegt auf der ganzen Kegelflaeche auf; die fruehere Regel
+"2 mm Material unter der Senkung" galt fuer die flache Senkung eines
+Zylinderkopfs, unter der nur ein duenner Boden den Kopf haelt (dort
+waren 0.41..0.81 mm gemessen worden). Bis 2026-11-27 hatten deshalb nur
+der Boden eine (flache) Senkung und Deckel und Seitenplatten keine; auf
+Nutzerwunsch sind jetzt alle Koepfe versenkt.
+
+Die Seitenplatten-Schrauben sitzen 4.5 mm vom Innenmass (vorher 3.5):
+dort endete eine Senkung 0.1 mm vor der Plattenkante. Die untere
+Schraube sitzt bei z = 28 (vorher 20): bei z = 20 schnitt schon das
+Loch der Blende in das Netzteilfenster.
 
 Die Seitenplatten waren 2.6 statt 3.0 mm, weil `platte_luft` auch von
 der Dicke abgezogen wurde. Luft braucht eine Platte aber nur in y und
@@ -161,13 +184,17 @@ Verschnitt-Tests (siehe CHANGES.txt):
    y = 96.012) liegen danach unter den Saeulen der Laengswaende, ein
    Schrauber kommt dort nicht mehr hin.
 2. **Karten einstecken**, solange noch keine Wand steht.
-3. **wand_vorn und wand_hinten** aufsetzen und am Boden verschrauben.
+3. **wand_vorn und wand_hinten** von oben aufsetzen und waagrecht von
+   aussen in die Sockel des Bodens schrauben (je 2x M3x10 Senkkopf).
 4. **blende und wand_rechts** anschrauben, **Deckel** zuletzt.
 
 Die Backplane laesst sich nicht von oben durch den fertigen Rahmen
 einsetzen - Fuehrungsstege und Saeulen versperren den Weg (gemessen:
 19 695 mm3 im Einschubweg). Mit der vierteiligen Teilung ist das kein
-Problem, weil die Waende zuletzt kommen.
+Problem, weil die Waende zuletzt kommen - vorausgesetzt, sie tragen
+unterhalb der Backplane nichts nach innen. Das ist seit 2026-11-27
+geprueft (Verschnitt des Aufsetzwegs mit der Backplane: 0 mm3; der
+Stand davor hatte 2018 mm3 Konflikt durch die Gewindedome der Waende).
 
 ## Kartenfuehrung - Masse der Passung
 

@@ -453,3 +453,90 @@ README: Abschnitt "Mehrere Teile in einem Druck" an der Stelle des
 Plattenabschnitts - warum es keine Platten gibt, und dass die sieben
 Teile auf ein 256-mm-Bett ohnehin nicht in einen Druck passen (82058
 gegen 65536 mm^2), jedes einzelne aber bequem.
+
+============================================================
+2026-11-27 13:55
+============================================================
+Laengswaende waagrecht an Sockel des Bodens geschraubt (vorher
+liessen sie sich nicht ueber die Backplane setzen); Deckelloecher
+symmetrisch; alle Gehaeuseschrauben versenkt (Senkkopf).
+
+Prompt: "ihr habt einen Fehler auf 2 Bauteilen / und einen
+Schönheitsfeher / Abdeckung vorne und hinten / Die Löcher sind auf der
+Innenseite, gehören aber nach außen, weil man sonst den Boden nicht
+anschrauben kann / Die Schönheitsfehler: / Die Abstände der Bohrungen
+zur Seite, sind nicht symmetrisch / Somit muss man erst den Deckel
+richtig drehen, damit man ihn verschrauben kann / Der Fehler liegt
+auch daran, dass die senkrechten Stege nicht gleich sind. Dadurch
+kommt der Versatz am Deckel / Ich werde die 4 Löcher jetzt nur
+durchbohren, damit ich sie verschrauben kann. / 2. Schönheitsfehler:
+/ Die Löcher sollten alle eine Senkung bekommen, damit die Köpfe
+verschwinden, wenn man sie eindreht. Ich habe rechts mal eine Senkung
+manuell gemacht / Ansonsten sieht es bis jetzt (2 Wände, Deckel Boden)
+ganz gut aus" (mit drei Fotos: Deckel montiert, Deckel im Slicer,
+Laengswand im Slicer mit den beiden Bodendomen markiert)
+
+1. FEHLER: Bodenverschraubung. Ursache: die Gewindedome fuer den Boden
+   (d = 10 mm bei y = Innenmass + 3) sassen an den Laengswaenden und
+   ragten bis y = 7.4 unter die Backplane-Kante. Die Backplane muss
+   aber ZUERST auf den Boden (zwei ihrer Schrauben liegen danach unter
+   den Saeulen), die Waende kommen danach von oben - und die Dome
+   stossen dabei an die Backplane. Der bisherige Verschnitt-Test hatte
+   nur die Endlage geprueft, nicht den Weg dorthin. Nachgemessen am
+   alten Stand: 2018 mm3 Wandmaterial im Weg der Backplane.
+   Fix: die Dome sind von den Waenden weg. Stattdessen traegt der
+   BODEN vier Sockel (10 x 8 x 9 mm, x = 30/70, buendig mit dem
+   Positionierrand, Oberkante 3 mm unter der Backplane), und die
+   Waende werden WAAGRECHT von aussen hineingeschraubt (M3x10
+   Senkkopf, Loch auf halber Sockelhoehe z = -9.1). Die Schraube sitzt
+   jetzt aussen, wie gewuenscht. Die Aussparung des Positionierrands
+   und die Senkloecher im Boden entfallen.
+
+2. Deckelloecher symmetrisch: vorher 3.5 mm (links) und 6 mm (rechts)
+   vom Innenmass, also 6.5 und 9 mm von der Aussenkante. Jetzt beide
+   8.5 mm von der Aussenkante (5.5 vom Innenmass), Dom 10 statt 11 mm
+   Durchmesser - so ragt er rechts nicht in die Plattenoeffnung (0.5 mm
+   Luft) und links nicht in den Wand-Luftschlitz bei x = 12 (0.35 mm).
+   Gedreht um 180 Grad passt der Deckel (Verschnitt mit den Waenden
+   0 mm3). Die "ungleichen Stege" sind der Innenraum: rechts liegen
+   UEBERSTAND_SLOT5 = 6 mm mehr fuer die Winkelbuchse von Slot 5. Das
+   bleibt so; gedreht liegen die Griffoeffnungen 5.4 mm neben der
+   Kartenmitte, bei 16 mm Breite noch ueber der Karte.
+
+3. Senkungen ueberall: neues Modul senkung(), 90-Grad-Kegel, oben
+   6.4 mm, 1.5 mm tief - in Deckel (oben), Seitenplatten (aussen) und
+   Laengswaenden (aussen, fuer die Bodenschrauben). Alle
+   Gehaeuseschrauben sind damit Senkkopfschrauben (DIN 965 / ISO 7046
+   oder DIN 7991); die Laengen bleiben (Senkkopf zaehlt mit Kopf):
+   Deckel M3x12 (9 mm Eingriff in 11 mm Bohrung), Seitenplatten M3x10,
+   Bodensockel M3x10 (7 mm Eingriff, Sockel 8 mm). Die Regel min_rest
+   (2 mm unter einer FLACHEN Zylinderkopfsenkung, 2026-11-22) gilt fuer
+   den Kegel nicht; m3_kopf und min_rest sind aus der scad heraus.
+
+4. Beim Pruefen der Senkungen gefunden, schon im alten Stand falsch:
+   das untere Schraubloch der Blende (z = 20, y = Innenmass + 3.5)
+   schnitt in das Netzteilfenster (z 0..22, y ab 4). Mit Senkung waere
+   ausserdem am Plattenrand nur 0.1 mm Material geblieben. Jetzt:
+   PLATTE_SCHRAUBE y = Innenmass + 4.5, untere Reihe z = 28, Saeulen
+   9 statt 8 mm tief (Wandung ums Gewinde weiter 3.15 mm). Fuer beide
+   Seitenplatten gleich.
+
+Verifikation (OpenSCAD 2021.01 unter Ubuntu, Verschnitt-Tests mit $fn = 16,
+Volumen aus der STL; pruef.scad wie im Eintrag 2026-11-22, nicht im
+Repository):
+  Wandmaterial im Grundriss der Backplane unter ihrer Oberseite
+    (= Aufsetzweg)                 neu leer, alt 2018.09 mm3
+  Wandmaterial im Grundriss der Karten unter Kartenoberkante  leer
+  boden/Waende 0.001 mm3 (Rundung), deckel/Waende 0.000,
+  deckel 180 Grad gedreht/Waende 0.000, Seitenplatten gegen Waende,
+  Deckel und Boden leer, M3x10 im Sockel gegen Backplane leer.
+  1-mm-Ring um jede Senkung der Seitenplatten ganz im Material: neu
+  leer (kein Fehlstueck), alter Stand mit Senkung 108 mm3 Fehlstueck.
+  Lochlagen per echo: Deckel 8.5/8.5 mm von links/rechts, 6.5/6.5 von
+  vorn/hinten.
+STL neu: boden 60397.8, wand_vorn 64576.6, wand_hinten 64701.3,
+blende 29614.9, wand_rechts 35361.5, deckel 25931.4 mm3; alle liegen
+bei z >= 0 und im positiven x/y, Abmessungen wie bisher. probe
+unveraendert (5294.5 mm3, Datei nicht neu eingecheckt). Bilder konnten
+hier nicht gerendert werden (OpenSCAD-PNG ohne GL bricht ab) - die
+Pruefung ist rein boolesch. Druck und Passung: TODO-Punkt 11.

@@ -17,15 +17,26 @@
 //
 //  DER RAHMEN BESTEHT AUS VIER SEITENTEILEN (senkrechte Teilung an den
 //  Ecken), damit kein Teil hoch gedruckt werden muss:
-//    wand_vorn    - Laengswand mit Kartenfuehrung, liegend  112 x 135 x 15
-//    wand_hinten  - dasselbe gespiegelt,           liegend  112 x 135 x 15
+//    wand (2x)    - Laengswand mit Kartenfuehrung, liegend  118 x 135 x 15
 //    blende       - linke Seite, Fenster fuers Netzteil     135 x 101 x 3
 //    wand_rechts  - rechte Seite, Lueftung                  135 x 101 x 3
-//  Die beiden Laengswaende tragen alle Gewinde; Boden und Deckel
-//  klammern sie, die beiden Seitenplatten ziehen sie zusammen.
+//  Die beiden Laengswaende tragen die Gewinde fuer Deckel und
+//  Seitenplatten und sind an Sockel des Bodens geschraubt.
 //
-//  Teile:  boden + wand_vorn + wand_hinten + blende + wand_rechts
-//          + deckel   (+ probe zum Vorabtest)
+//  SYMMETRIE (Nutzer 2026-11-27: "symetrischer, damit man die Teile
+//  eher vertauschen kann"): der Innenraum liegt in x und y symmetrisch
+//  zur Backplane-Mitte BP/2. Links ist dafuer derselbe Freiraum wie
+//  rechts fuer die Winkelbuchse von Slot 5 (UEBERSTAND_SLOT5). Daraus
+//  folgt: hintere Wand = vordere Wand um 180 Grad gedreht (ein Teil,
+//  zweimal drucken); der Deckel passt in beiden Lagen samt
+//  Griffoeffnungen; blende und wand_rechts haben dieselben Loecher und
+//  passen auf beide Seiten. Nur der Boden hat eine feste Lage - die
+//  Backplane-Loecher sind nicht symmetrisch.
+//  Jedes Teil traegt seinen Namen als 0.6 mm tiefe Gravur auf einer
+//  Innenflaeche (beschriftung()).
+//
+//  Teile:  boden + 2x wand + blende + wand_rechts + deckel
+//          (+ probe zum Vorabtest)
 //  Schrauben, alle selbstschneidend in den Kunststoff. Alle Schrauben
 //  des Gehaeuses sind SENKKOPFSCHRAUBEN (90 Grad, DIN 965 / ISO 7046
 //  oder DIN 7991) und verschwinden in einer Senkung (Nutzer
@@ -49,10 +60,10 @@
 //
 //  REIHENFOLGE DES ZUSAMMENBAUS (geprueft, nicht beliebig):
 //    1. Backplane auf die Dome des Bodens schrauben (6x M3x8). Das MUSS
-//       zuerst geschehen: zwei der sechs Schrauben liegen danach unter
-//       den Saeulen der Laengswaende.
+//       zuerst geschehen: zwei der sechs Schrauben liegen danach halb
+//       unter den Saeulen der Laengswaende (Saeule bis x = 3.0).
 //    2. Karten einstecken, solange noch keine Wand steht.
-//    3. wand_vorn und wand_hinten von oben aufsetzen und waagrecht
+//    3. die beiden Waende von oben aufsetzen und waagrecht
 //       von aussen an die Sockel des Bodens schrauben. Die Waende
 //       tragen unterhalb der Backplane NICHTS nach innen - sonst
 //       stiessen sie beim Aufsetzen an die schon montierte Backplane
@@ -67,7 +78,7 @@
 // sonst  = ein einzelnes Druckteil in Drucklage. Fertige Druckplatten
 //          mit mehreren Teilen gibt es bewusst nicht - das Anordnen
 //          auf dem Bett macht der Slicer besser (Nutzer 2026-11-26).
-teil = "alle";          // [alle, boden, wand_vorn, wand_hinten, blende, wand_rechts, deckel, probe]
+teil = "alle";          // [alle, boden, wand, blende, wand_rechts, deckel, probe]
 // Hardware in der Zusammenbau-Ansicht mitzeichnen
 zeige_hardware = true;
 
@@ -142,7 +153,8 @@ griff_r     = 4.0;      // Eckradius der Oeffnung
 $fn = 48;
 
 // ---------------------------------------------------------------- Masse
-x0 = -(luft + wand);
+// x symmetrisch zu BP/2: links derselbe Freiraum wie rechts
+x0 = -(UEBERSTAND_SLOT5 + wand);
 x1 = BP + UEBERSTAND_SLOT5 + wand;
 y0 = -(luft + wand);
 y1 = BP + luft + wand;
@@ -163,7 +175,7 @@ kragen    = 3;                      // Deckelkragen, taucht in den Rahmen
 // und gleitet mit ihrer Innenflaeche am Sockel vorbei.
 // x-Lage zwischen den Steckerreihen und neben den Backplane-Domen
 // (gegen die Bohrdatei der Backplane geprueft, wie die frueheren Dome).
-BODEN_SCHRAUBE_X = [30, 70];
+BODEN_SCHRAUBE_X = [BP/2 - 20, BP/2 + 20];   // 29.9 / 69.9
 sockel_b    = 10;       // Breite in x
 sockel_t    = 8;        // Tiefe in y ab Wandinnenseite (Gewinde 8 mm)
 sockel_h    = 9;        // Hoehe; Oberkante 3 mm unter der Backplane
@@ -173,8 +185,7 @@ z_boden_schraube = -(PCB_DICKE + dom_h) + sockel_h / 2;  // Lochmitte
 // 5.5 mm vom Innenmass, also 8.5 mm von der Aussenkante. Der Dom hat
 // 10 mm Durchmesser; so ragt er rechts nicht in die Oeffnung der
 // Seitenplatte (0.5 mm Luft) und links nicht in den Luftschlitz bei
-// x = 12 (0.35 mm Luft). Der Innenraum selbst ist NICHT symmetrisch:
-// rechts liegen UEBERSTAND_SLOT5 = 6 mm mehr fuer die Winkelbuchse.
+// x = BP/2 - 40 (3.7 mm Luft).
 DECKEL_SCHRAUBE = [[xi0 + 5.5, yi0 + 3.5], [xi1 - 5.5, yi0 + 3.5],
                    [xi1 - 5.5, yi1 - 3.5], [xi0 + 5.5, yi1 - 3.5]];
 dom_deckel_d = 10;
@@ -191,7 +202,8 @@ dom_bp_d  = 8;          // Abstandsdome der Backplane, aussen
 saeule_x  = 9;          // Laenge der Saeulen in x
 saeule_y  = 9;          // Tiefe der Saeulen in y (Wandung ums Gewinde)
 // Luftschlitze in den Fuehrungswaenden (x-Mitten zwischen den Kanaelen)
-LUEFT_X = [12, 29.6, 49.9, 70.2, 92];
+// Symmetrisch zu BP/2: Mitte, zwischen Slot 1/2 und 3/4, aussen.
+LUEFT_X = [for (o = [-40, -20.32, 0, 20.32, 40]) BP/2 + o];
 LUEFT_Y = [12 : 15 : 95];
 
 // Luftschlitze im Deckel liegen in zwei Baendern VOR und HINTER den
@@ -277,6 +289,17 @@ module fuehrungen() {
     }
 }
 
+// Gravur: Text in der xy-Ebene, mittig um den Ursprung, nach +z
+// gravur_t tief (der Aufrufer zieht sie von der Flaeche ab).
+gravur_t = 0.6;
+gravur_h = 5;           // Schrifthoehe
+module beschriftung(t, spiegeln = false) {
+    linear_extrude(gravur_t + 0.01)
+        mirror([spiegeln ? 1 : 0, 0, 0])
+            text(t, size = gravur_h, font = "Liberation Sans:style=Bold",
+                 halign = "center", valign = "center");
+}
+
 // Senkung fuer eine M3-Senkkopfschraube, Achse z, Oberflaeche bei z = 0,
 // Kegel nach -z. Die Durchgangsbohrung selbst zeichnet der Aufrufer.
 module senkung() {
@@ -298,8 +321,13 @@ module dom(x, y, z_unten, hoehe, d_aussen, d_loch, loch_tief) {
 // 45-Grad-Anlauf. x_von = linke Kante der Saeule.
 module saeule(x_von, y_wand, dir) {
     y_a = dir > 0 ? y_wand - 0.8 : y_wand - saeule_y;
+    // Anfang der 45-Grad-Schraege immer AN DER WAND. Bis 2026-11-27
+    // lag er bei der hinteren Wand (dir < 0) an der Innenkante der
+    // Saeule - dort klaffte ein Keil zwischen Saeule und Wand, und die
+    // beiden Waende waren nicht gleich (Verschnitt 729 mm3).
+    y_b = dir > 0 ? y_wand - 0.8 : y_wand - 0.01;
     hull() {
-        translate([x_von, y_a, steg_z0]) cube([saeule_x, 0.81, 0.01]);
+        translate([x_von, y_b, steg_z0]) cube([saeule_x, 0.81, 0.01]);
         translate([x_von, y_a, steg_z0 + saeule_y])
             cube([saeule_x, saeule_y + 0.8, 0.01]);
     }
@@ -327,6 +355,8 @@ module boden() {
             for (x = BP_LOCH_X) for (y = BP_LOCH_Y)
                 dom(x, y, z_bo_top, dom_h, dom_bp_d, m3_kern, 10);
         }
+        // Gravur oben auf der Bodenplatte, zwischen Domen und Schlitzen
+        translate([BP/2, 14, z_bo_top - gravur_t]) beschriftung("BODEN");
         // Kernloecher in den Sockeln, waagrecht in y, durchgehend
         for (x = BODEN_SCHRAUBE_X) {
             translate([x, yi0 - 1, z_boden_schraube]) rotate([-90, 0, 0])
@@ -336,7 +366,7 @@ module boden() {
         }
         // Luftschlitze
         translate([0, 0, z_bo_bot - 1]) linear_extrude(boden_d + 2)
-            for (x = [20 : 10 : 85]) schlitz_xy(x, BP/2, 56, 4);
+            for (o = [-30 : 10 : 30]) schlitz_xy(BP/2 + o, BP/2, 56, 4);
     }
 }
 
@@ -393,22 +423,29 @@ module rahmen_voll() {
         }
     }
 }
-// Die beiden Druckteile: senkrechte Teilung an den Ecken.
+// Das Druckteil "wand": senkrechte Teilung an den Ecken. Die hintere
+// Wand ist DIESELBE, um 180 Grad um die Hochachse durch BP/2 gedreht -
+// das geht, weil rahmen_voll() symmetrisch ist (Verschnitt-Test in
+// CHANGES.txt: gedrehte vordere gegen herausgeschnittene hintere Wand,
+// Differenz leer).
 module wand_vorn() {
-    intersection() {
-        rahmen_voll();
-        translate([x0 - 1, y0 - 1, z_bo_top - 1])
-            cube([x1 - x0 + 2, (yi0 + wand_tief) - (y0 - 1),
-                  z_top - z_bo_top + 2]);
+    difference() {
+        intersection() {
+            rahmen_voll();
+            translate([x0 - 1, y0 - 1, z_bo_top - 1])
+                cube([x1 - x0 + 2, (yi0 + wand_tief) - (y0 - 1),
+                      z_top - z_bo_top + 2]);
+        }
+        // Gravur innen, unter der Backplane zwischen den Sockeln und
+        // ueber dem Positionierrand des Bodens;
+        // gespiegelt, damit sie von innen gelesen richtig steht
+        translate([BP/2, yi0 + 0.01, z_bo_top + 6.5])
+            rotate([90, 0, 0]) beschriftung("WAND 2x", true);
     }
 }
 module wand_hinten() {
-    intersection() {
-        rahmen_voll();
-        translate([x0 - 1, yi1 - wand_tief, z_bo_top - 1])
-            cube([x1 - x0 + 2, (y1 + 1) - (yi1 - wand_tief),
-                  z_top - z_bo_top + 2]);
-    }
+    translate([BP/2, BP/2, 0]) rotate([0, 0, 180])
+        translate([-BP/2, -BP/2, 0]) wand_vorn();
 }
 
 // ======================================== SEITENPLATTEN (blende, rechts)
@@ -445,6 +482,14 @@ module seitenplatte(seite) {
         for (y = LUEFT_Y)
             schlitz_yz(y, seite < 0 ? 35 : 30, z_top - 10, 3.5,
                        xa - 1, wand + 2);
+        // Gravur innen, unterhalb des Fensters; so gedreht, dass sie
+        // von innen gelesen richtig steht
+        if (seite < 0)
+            translate([xi0 - gravur_t, BP/2, z_bo_top + 7])
+                rotate([90, 0, 90]) beschriftung("BLENDE LINKS");
+        else
+            translate([xi1 - 0.01, BP/2, z_bo_top + 7])
+                rotate([90, 0, 90]) beschriftung("RECHTS", true);
         // optionaler Schlitz fuer eine Karte in der Winkelbuchse (Slot 5)
         if (seite > 0 && slot5_schlitz)
             translate([xa - 1, 2, STECKHOEHE - 3])
@@ -485,9 +530,15 @@ module deckel() {
                             rrect(griff_x, griff_y, griff_r);
                     // Luftschlitze in den Baendern vor und hinter den
                     // Griffoeffnungen
-                    for (x = [12 : 9 : 96]) for (ym = GRIFF_LUEFT_Y)
-                        schlitz_xy(x, ym, griff_lueft_l, 4);
+                    for (i = [0 : 9]) for (ym = GRIFF_LUEFT_Y)
+                        schlitz_xy(BP/2 + (i - 4.5) * 9, ym,
+                                   griff_lueft_l, 4);
                 }
+        // Gravur auf der Unterseite, im Streifen links neben den
+        // Luftschlitzen, laengs in y
+        translate([(xi0 + 2.3 + BP/2 - 4.5 * 9 - 2) / 2, BP/2,
+                   z_top - 0.01])
+            rotate([0, 0, 90]) beschriftung("DECKEL", true);
         if (deckel_art == "offen")
             translate([0, 0, z_top - kragen - 1])
                 linear_extrude(deckel_d + kragen + 2)
@@ -563,9 +614,6 @@ module druck_boden()  { translate([-x0, -y0, -z_bo_bot]) boden(); }
 module druck_wand_vorn() {
     translate([-x0, z_top, -y0]) rotate([90, 0, 0]) wand_vorn();
 }
-module druck_wand_hinten() {
-    translate([-x0, -z_bo_top, y1]) rotate([-90, 0, 0]) wand_hinten();
-}
 module druck_blende() {
     translate([-(z_bo_top + platte_luft), -(yi0 + platte_luft),
                x0 + wand])
@@ -582,8 +630,7 @@ module druck_deckel() {
 
 if (teil == "alle")             assembly();
 else if (teil == "boden")       druck_boden();
-else if (teil == "wand_vorn")   druck_wand_vorn();
-else if (teil == "wand_hinten") druck_wand_hinten();
+else if (teil == "wand")        druck_wand_vorn();
 else if (teil == "blende")      druck_blende();
 else if (teil == "wand_rechts") druck_wand_rechts();
 else if (teil == "deckel")      druck_deckel();

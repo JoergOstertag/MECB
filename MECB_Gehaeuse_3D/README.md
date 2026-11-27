@@ -15,8 +15,7 @@ der einteilige Rahmen 135 mm Bauhoehe.
 |-------------------------------|------------------------------------------|
 | MECB_Gehaeuse.scad            | Quelle, alle Masse und Parameter         |
 | MECB_Gehaeuse_boden.stl       | Bodenplatte 5 mm, Backplane-Dome, Sockel |
-| MECB_Gehaeuse_wand_vorn.stl   | Laengswand vorn, mit Kartenfuehrung      |
-| MECB_Gehaeuse_wand_hinten.stl | Laengswand hinten, mit Kartenfuehrung    |
+| MECB_Gehaeuse_wand.stl        | Laengswand mit Kartenfuehrung, 2x drucken|
 | MECB_Gehaeuse_blende.stl      | linke Seite, Fenster fuer das Netzteil   |
 | MECB_Gehaeuse_wand_rechts.stl | rechte Seite, Lueftung                   |
 | MECB_Gehaeuse_deckel.stl      | Deckel mit Griffoeffnungen               |
@@ -25,19 +24,45 @@ der einteilige Rahmen 135 mm Bauhoehe.
 Jedes Druckteil liegt in seiner STL-Datei schon in Drucklage: z = 0 ist
 das Druckbett, x und y sind positiv.
 
+## Symmetrie und Beschriftung
+
+Der Innenraum liegt symmetrisch zur Backplane-Mitte (Nutzerwunsch
+2026-11-27: Teile sollen sich vertauschen lassen). Links ist dafuer
+derselbe Freiraum von 6 mm wie rechts, wo ihn die Winkelbuchse von
+Slot 5 braucht; das Gehaeuse ist dadurch 5.4 mm laenger als vorher.
+Daraus folgt:
+
+- vordere und hintere Wand sind DASSELBE Teil (`wand`, zweimal
+  drucken), die hintere ist die vordere um 180 Grad gedreht;
+- der Deckel passt in beiden Lagen, die Griffoeffnungen liegen in
+  beiden Lagen ueber den Karten;
+- blende und wand_rechts haben dieselben Schraubloecher und passen
+  auf beide Seiten (die Blende gehoert wegen des Netzteilfensters
+  nach links);
+- nur der Boden hat eine feste Lage: die Backplane-Loecher selbst sind
+  nicht symmetrisch.
+
+Jedes Teil traegt seinen Namen als 0.6 mm tiefe Gravur auf einer
+Innenflaeche (Schrift 5 mm, Liberation Sans Bold): BODEN oben auf der
+Bodenplatte, WAND 2x innen unter der Backplane-Hoehe, DECKEL auf der
+Unterseite links, BLENDE LINKS und RECHTS innen unterhalb des Fensters
+bzw. der Schlitze. Die Gravuren liegen so, dass sie von innen gelesen
+richtig stehen. OpenSCAD braucht dafuer die Schrift Liberation Sans
+(unter Ubuntu Paket `fonts-liberation`, unter Windows mit OpenSCAD
+mitgeliefert).
+
 ## Abmessungen der Druckteile
 
 | Teil        |     x |     y |    z | Hinweis zum Druck               |
 |-------------|------:|------:|-----:|---------------------------------|
-| boden       | 112.4 | 107.0 | 17.0 | flach, Dome nach oben           |
-| wand_vorn   | 112.4 | 134.9 | 15.0 | liegt auf der Aussenflaeche     |
-| wand_hinten | 112.4 | 134.9 | 15.0 | liegt auf der Aussenflaeche     |
+| boden       | 117.8 | 107.0 | 17.0 | flach, Dome nach oben           |
+| wand (2x)   | 117.8 | 134.9 | 15.0 | liegt auf der Aussenflaeche     |
 | blende      | 134.5 | 100.6 |  3.0 | liegt flach, Fenster unten      |
 | wand_rechts | 134.5 | 100.6 |  3.0 | liegt flach                     |
-| deckel      | 112.4 | 107.0 |  6.0 | Aussenseite unten, Kragen oben  |
+| deckel      | 117.8 | 107.0 |  6.0 | Aussenseite unten, Kragen oben  |
 | probe       |  44.0 |  14.0 | 40.0 | zuerst drucken                  |
 
-Aussenmass des Gehaeuses: 112.4 x 107.0 x 142.9 mm. Groesster
+Aussenmass des Gehaeuses: 117.8 x 107.0 x 142.9 mm. Groesster
 Bettbedarf: 134.9 mm in einer Achse. Kein Teil braucht
 Stuetzmaterial; alle Anbauteile (Stege, Saeulen, Dome) zeigen in
 Drucklage nach oben.
@@ -82,11 +107,7 @@ Die Bodensockel sind 8 mm tief, eine M3x10 greift dort 7 mm.
 
 Die Schraubloecher des Deckels liegen symmetrisch zur Gehaeusemitte
 (8.5 mm von der linken und rechten, 6.5 mm von der vorderen und hinteren
-Aussenkante): der Deckel passt auch um 180 Grad gedreht. Der Innenraum
-ist dagegen NICHT symmetrisch - rechts liegen 6 mm mehr fuer die
-Winkelbuchse von Slot 5 (`UEBERSTAND_SLOT5`). Gedreht sitzen die
-Griffoeffnungen deshalb 5.4 mm neben der Kartenmitte; bei 16 mm breiten
-Oeffnungen liegt die Karte trotzdem darunter.
+Aussenkante): der Deckel passt auch um 180 Grad gedreht.
 
 Alle Schrauben schneiden sich selbst in den Kunststoff (Kernloch
 2.7 mm).
@@ -181,10 +202,10 @@ Verschnitt-Tests (siehe CHANGES.txt):
 
 1. **Backplane auf die Dome des Bodens schrauben** (6x M3x8). Das muss
    zuerst geschehen: zwei der sechs Schrauben (x = 3.81, y = 3.81 und
-   y = 96.012) liegen danach unter den Saeulen der Laengswaende, ein
-   Schrauber kommt dort nicht mehr hin.
+   y = 96.012) liegen danach halb unter den Saeulen der Laengswaende
+   (Saeule bis x = 3.0), ein Schrauber kommt dort nicht mehr hin.
 2. **Karten einstecken**, solange noch keine Wand steht.
-3. **wand_vorn und wand_hinten** von oben aufsetzen und waagrecht von
+3. **die beiden Waende** von oben aufsetzen und waagrecht von
    aussen in die Sockel des Bodens schrauben (je 2x M3x10 Senkkopf).
 4. **blende und wand_rechts** anschrauben, **Deckel** zuletzt.
 
@@ -241,7 +262,7 @@ weniger als 1 mm Material stehen geblieben, weil die Steckplaetze alle
 ## STL-Dateien neu erzeugen
 
 ```bash
-for t in boden wand_vorn wand_hinten blende wand_rechts deckel probe; do
+for t in boden wand blende wand_rechts deckel probe; do
     openscad -o "MECB_Gehaeuse_$t.stl" -D "teil=\"$t\"" MECB_Gehaeuse.scad
 done
 ```

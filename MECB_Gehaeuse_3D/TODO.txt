@@ -17,7 +17,7 @@ PRUEFLISTE - UEBERSICHT
   3.  Testteil "probe" drucken: Kanal, Einfuehrtrichter, M3-Gewinde
   7.  Steifigkeit der vierteiligen Verbindung am gedruckten Teil pruefen
   8.  Steckkontaktlaenge DIN 41612 messen - reichen 8 mm Hub?
-  11. Stand 2026-11-27 drucken: Waende ueber Backplane, Sockel, Senkungen
+  11. Stand 2026-11-27 drucken: Aufsetzen, Sockel, Senkungen, Tausch, USB
 
 ------------------------------------------------------------
 
@@ -104,14 +104,21 @@ Hardware (eigener MECB-Aufbau)
 
 [ ] 11. Teile des Stands 2026-11-27 drucken und am Aufbau pruefen.
         Geaendert und neu zu drucken: boden (Sockel statt Senkloecher),
-        wand_vorn und wand_hinten (keine Dome mehr, waagrechte
-        Senkloecher), deckel (symmetrische Loecher, Senkungen); blende
-        und wand_rechts erstmals (Senkungen, Schrauben auf 4.5 mm und
-        z = 28). Zu pruefen:
+        wand (2x, ersetzt wand_vorn/wand_hinten; keine Dome mehr,
+        waagrechte Senkloecher), deckel (symmetrisch, Senkungen),
+        blende und wand_rechts erstmals (Senkungen, Schrauben auf
+        4.5 mm und z = 28). Alle Teile sind seit der Symmetrie 5.4 mm
+        laenger - gedruckte Teile des alten Stands passen nicht mehr
+        zusammen. Zu pruefen:
         a) lassen sich die Waende ueber der montierten Backplane mit
            eingesteckten Karten von oben aufsetzen (gerechnet 0 mm3
            Konflikt, der alte Stand hatte 2018 mm3)?
         b) zieht eine M3x10-Senkkopfschraube waagrecht im Sockel
            (Kernloch 2.7 mm, im Druck liegend - Loch evtl. oval)?
         c) liegen die Senkkoepfe buendig (Kegel 6.4 mm oben, 90 Grad)?
-        d) passt der Deckel in beiden Lagen?
+        d) passt der Deckel in beiden Lagen, passen beide Waende und
+           beide Seitenplatten vertauscht?
+        e) sind die Gravuren (0.6 mm, Schrift 5 mm) lesbar?
+        f) reicht ein USB-C-/Hohlstecker durch das Blendenfenster bis
+           in die Buchse? Links liegen jetzt 6 mm Luft zwischen
+           Backplane-Kante und Blende (vorher 0.6 mm).

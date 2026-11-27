@@ -540,3 +540,70 @@ bei z >= 0 und im positiven x/y, Abmessungen wie bisher. probe
 unveraendert (5294.5 mm3, Datei nicht neu eingecheckt). Bilder konnten
 hier nicht gerendert werden (OpenSCAD-PNG ohne GL bricht ab) - die
 Pruefung ist rein boolesch. Druck und Passung: TODO-Punkt 11.
+
+============================================================
+2026-11-27 14:23
+============================================================
+Gehaeuse symmetrisch zur Backplane-Mitte: eine Wand fuer vorn und
+hinten (2x drucken), Deckel und Seitenplatten vertauschbar; alle Teile
+mit eingravierter Beschriftung.
+
+Prompt (Zusatz zum vorigen Eintrag, ein weitergereichter Satz "lass
+die löcher einfach durchgängig machen / dann muss er sie nur
+verlängern"; auf die Rueckfrage, welche Loecher gemeint sind):
+"SWuche eine Lösung in der die Schrauben passen und die ggf.
+symetrischer ist, damit man die Teile eher vertauschen kann.
+Beschrifte die Teile selber per 3D ach mit"
+
+Loesung: der Innenraum liegt jetzt in x symmetrisch zu BP/2. Links ist
+derselbe Freiraum wie rechts (UEBERSTAND_SLOT5 = 6 mm statt 0.6 mm
+luft), x0 = -9.0; das Gehaeuse wird 5.4 mm laenger (117.8 x 107.0 x
+142.9 mm). Mit symmetrisch gesetzt: Luftschlitze der Waende
+(BP/2 + 0, +-20.32, +-40), Luftschlitze des Deckels (BP/2 + (i-4.5)*9)
+und des Bodens (BP/2 + -30..30), Bodensockel (BP/2 +- 20). Die
+Slot-Mitten waren schon symmetrisch (19.431 + 80.391 = 99.822).
+Damit:
+- wand_hinten() ist jetzt wand_vorn() um 180 Grad um die Hochachse
+  durch BP/2 gedreht; statt wand_vorn.stl/wand_hinten.stl gibt es
+  MECB_Gehaeuse_wand.stl (2x drucken), teil = "wand".
+- Deckel passt in beiden Lagen samt Griffoeffnungen ueber den Karten.
+- blende und wand_rechts sind auf beiden Seiten montierbar.
+- Der Boden bleibt fest orientiert (Backplane-Loecher x = 3.81 /
+  49.911 / 90.17 sind nicht symmetrisch).
+Schrauben unveraendert (Senkkopf M3x10 / M3x12 wie im vorigen Eintrag).
+
+Beim Symmetrie-Test gefunden, schon vorher falsch: saeule() setzte den
+Anfang der 45-Grad-Schraege bei der HINTEREN Wand an die Innenkante der
+Saeule statt an die Wand - dort klaffte ein Keil zwischen Saeule und
+Wand. Behoben (y_b); gedrehter gegen ungedrehten Rahmen vorher 729 mm3
+Unterschied, jetzt 0.15/0.20 mm3 (Rundungshaut ueber das ganze Teil
+verteilt, keine Stelle).
+
+Beschriftung: Modul beschriftung(), Gravur 0.6 mm tief, Schrift 5 mm
+Liberation Sans Bold, auf Innenflaechen, von innen lesbar: BODEN (oben
+auf der Bodenplatte, y = 14), WAND 2x (innen, z = -7.1, zwischen den
+Sockeln, ueber dem Positionierrand), DECKEL (Unterseite, Streifen
+links, laengs), BLENDE LINKS / RECHTS (innen, unterhalb von Fenster
+bzw. Schlitzen).
+
+Nebenwirkung, als TODO 11f eingetragen: zwischen Backplane-Kante und
+Blende liegen jetzt 6 mm statt 0.6 mm. Ob die Stecker (USB-C,
+Hohlstecker) durch das Fenster (92 x 22 mm) weit genug in die Buchsen
+reichen, ist nicht geprueft.
+
+Verifikation (OpenSCAD 2021.01 unter Ubuntu, $fn = 32; leere
+Ergebnisdateien werden jetzt vor jedem Lauf geloescht - beim ersten
+Lauf dieses Eintrags hatte eine alte Datei ein falsches Ergebnis
+vorgetaeuscht):
+  leer: Aufsetzweg Waende gegen Backplane und Karten, Boden gegen
+    Backplane, Seitenplatten gegen Deckel, Schraube M3x10 gegen
+    Backplane, 1-mm-Ring um jede Senkung der Seitenplatten
+  0.000 mm3: Deckel/Waende, Deckel 180 Grad/Waende, Seitenplatten/
+    Waende, Seitenplatten/Boden, Seitenplatten vertauscht/Waende;
+    Boden/Waende 0.002 (Rundung)
+  Rahmen gegen gedrehten Rahmen 0.15 / 0.20 mm3 (s.o.), Deckel gegen
+    gedrehten Deckel 36.6 mm3 = die Gravur DECKEL.
+STL: boden 63356.6, wand 66723.4, blende 29548.3, wand_rechts 35324.4,
+deckel 27693.3 mm3, alle bei z >= 0 und positiv in x/y; probe
+unveraendert (5294.5 mm3, Datei nicht neu eingecheckt). Gerechnet
+ohne Warnung, auch teil = "alle". Druck: TODO-Punkt 11.
